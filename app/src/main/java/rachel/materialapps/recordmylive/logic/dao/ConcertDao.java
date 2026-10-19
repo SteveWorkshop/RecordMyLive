@@ -22,7 +22,7 @@ public interface ConcertDao {
     long insert(ConcertEntity concert);
 
     @Update
-    void update(ConcertEntity concert);
+    int update(ConcertEntity concert);
 
     @Delete
     void delete(ConcertEntity concert);
@@ -48,6 +48,15 @@ public interface ConcertDao {
     int countByDate(LocalDate date);
 
     @Transaction
+    default boolean insertIfBelowDailyLimit(ConcertEntity concert, int dailyLimit) {
+        if (countByDate(concert.getDate()) >= dailyLimit) {
+            return false;
+        }
+        insert(concert);
+        return true;
+    }
+
+    @Transaction
     default void insertConcertWithSongs(ConcertEntity concert,
                                         List<ConcertSongEntity> songs,
                                         ConcertSongDao songDao) {
@@ -58,5 +67,44 @@ public interface ConcertDao {
             song.setConcertId(concertId);
         }
         songDao.insert(songs);
+    }
+
+    @Transaction
+    default boolean saveConcertWithSongs(ConcertEntity concert,
+                                         List<ConcertSongEntity> songs,
+                                         ConcertSongDao songDao,
+                                         int dailyLimit) {
+        if (countByDate(concert.getDate()) >= dailyLimit) {
+            return false;
+        }
+        long concertId = insert(concert);
+        insertSongsForConcert(songs, concertId, songDao);
+        return true;
+    }
+
+    @Transaction
+    default boolean updateConcertWithSongs(ConcertEntity concert,
+                                           List<ConcertSongEntity> songs,
+                                           ConcertSongDao songDao) {
+        if (update(concert) <= 0) {
+            return false;
+        }
+        songDao.deleteAll(concert.getId());
+        insertSongsForConcert(songs, concert.getId(), songDao);
+        return true;
+    }
+
+    private static void insertSongsForConcert(List<ConcertSongEntity> songs,
+                                             long concertId,
+                                             ConcertSongDao songDao) {
+        for (int i = 0; i < songs.size(); i++) {
+            ConcertSongEntity song = songs.get(i);
+            song.setId(0);
+            song.setConcertId(concertId);
+            song.setSortOrder(i + 1);
+        }
+        if (!songs.isEmpty()) {
+            songDao.insert(songs);
+        }
     }
 }

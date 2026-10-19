@@ -37,6 +37,7 @@ public class HomeViewModel extends AndroidViewModel {
     public HomeViewModel(@NonNull Application application) {
         super(application);
         repository=new ConcertRepository(application);
+        selectDate(LocalDate.now());
     }
 
 

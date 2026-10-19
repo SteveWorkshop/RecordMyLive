@@ -20,7 +20,7 @@ import rachel.materialapps.recordmylive.logic.entity.handler.PurchaseChannelConv
                 ConcertEntity.class,
                 ConcertSongEntity.class
         },
-        version = 2,
+        version = 4,
         exportSchema = false
 )
 @TypeConverters({

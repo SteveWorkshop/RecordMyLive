@@ -22,14 +22,17 @@ public class ConcertPreviewAdapter extends
         ListAdapter<ConcertEntity, ConcertPreviewAdapter.ViewHolder> {
 
     private final Consumer<ConcertEntity> clickListener;
+    private final Consumer<ConcertEntity> editListener;
     private final Consumer<ConcertEntity> deleteListener;
 
     public ConcertPreviewAdapter(
             Consumer<ConcertEntity> clickListener,
+            Consumer<ConcertEntity> editListener,
             Consumer<ConcertEntity> deleteListener
     ) {
         super(DIFF_CALLBACK);
         this.clickListener = clickListener;
+        this.editListener = editListener;
         this.deleteListener = deleteListener;
     }
 
@@ -65,6 +68,7 @@ public class ConcertPreviewAdapter extends
         void bind(
                 ConcertEntity concert,
                 Consumer<ConcertEntity> clickListener,
+                Consumer<ConcertEntity> editListener,
                 Consumer<ConcertEntity> deleteListener
         ) {
 
@@ -105,14 +109,14 @@ public class ConcertPreviewAdapter extends
 
             }
 
-            if (concert.getCoverPath() != null) {
-
+            if (concert.getCoverPath() != null && !concert.getCoverPath().isEmpty()) {
+                binding.imgCover.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
                 binding.imgCover.setImageURI(
                         Uri.parse(concert.getCoverPath())
                 );
 
             } else {
-
+                binding.imgCover.setScaleType(android.widget.ImageView.ScaleType.CENTER_INSIDE);
                 binding.imgCover.setImageResource(
                         R.drawable.baseline_imagesmode_24px
                 );
@@ -142,7 +146,9 @@ public class ConcertPreviewAdapter extends
 
                     int itemId = item.getItemId();
                     if(itemId==R.id.action_edit){
-                        //todo: 编辑
+                        if (editListener != null) {
+                            editListener.accept(concert);
+                        }
                         return true;
                     }
                     else if(itemId==R.id.action_delete){
@@ -187,6 +193,7 @@ public class ConcertPreviewAdapter extends
         holder.bind(
                 getItem(position),
                 clickListener,
+                editListener,
                 deleteListener
         );
 

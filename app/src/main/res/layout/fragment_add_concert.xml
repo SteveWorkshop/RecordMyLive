@@ -24,6 +24,9 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -43,6 +46,26 @@
             <include
                 android:id="@+id/layoutLocation"
                 layout="@layout/card_location"/>
+
+            <include
+                android:id="@+id/layoutSeatInfo"
+                layout="@layout/card_seat_info"/>
+
+            <include
+                android:id="@+id/layoutTicketPrice"
+                layout="@layout/card_ticket_price"/>
+
+            <include
+                android:id="@+id/layoutArtistList"
+                layout="@layout/card_artist_list"/>
+
+            <include
+                android:id="@+id/layoutSongList"
+                layout="@layout/card_song_list"/>
+
+            <include
+                android:id="@+id/layoutNote"
+                layout="@layout/card_note"/>
 
         </LinearLayout>
 

@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         app:menu="@menu/navigation_rail_menu"
         app:labelVisibilityMode="selected"
-
+        tools:viewBindingType="com.google.android.material.navigation.NavigationBarView"
         />
 
 </LinearLayout>

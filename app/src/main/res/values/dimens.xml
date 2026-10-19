@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Compact-height windows, such as phones in landscape. -->
+    <dimen name="calendar_day_height">38dp</dimen>
+</resources>

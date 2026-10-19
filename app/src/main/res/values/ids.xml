@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="edtSongName" type="id" />
+    <item name="checkEncore" type="id" />
+    <item name="edtArtistName" type="id" />
+</resources>

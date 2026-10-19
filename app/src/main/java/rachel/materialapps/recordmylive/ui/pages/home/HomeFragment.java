@@ -73,6 +73,39 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager()
+                .findFragmentById(R.id.my_nav_host_fragment);
+        navController = navHostFragment.getNavController();
+        initRecyclerView();
+
+        mViewModel.getSelectedDate().observe(getViewLifecycleOwner(), date -> {
+            selectedDate = date;
+            binding.tvSelectedDate.setText(DateTimeFormatter.ofPattern("yyyy年M月d日").format(date));
+            binding.calendarView.notifyCalendarChanged();
+        });
+
+        mViewModel.getMonthMarks().observe(getViewLifecycleOwner(), dates -> {
+            concertDates.clear();
+            concertDates.addAll(dates);
+            binding.calendarView.notifyCalendarChanged();
+        });
+
+        mViewModel.getConcerts().observe(getViewLifecycleOwner(), concerts -> {
+            adapter.submitList(concerts);
+            binding.rvConcert.setVisibility(concerts.isEmpty() ? View.GONE : View.VISIBLE);
+            binding.emptyView.setVisibility(concerts.isEmpty() ? View.VISIBLE : View.GONE);
+        });
+
+        navController.getCurrentBackStackEntry().getSavedStateHandle()
+                .<String>getLiveData("selectedDate").observe(getViewLifecycleOwner(), date -> {
+                    if (date != null) {
+                        mViewModel.selectDate(LocalDate.parse(date));
+                        navController.getCurrentBackStackEntry().getSavedStateHandle()
+                                .remove("selectedDate");
+                    }
+                });
+
         binder = new CalendarDayBinder(
                 () -> selectedDate,
                 () -> concertDates,
@@ -94,48 +127,12 @@ public class HomeFragment extends Fragment {
 
         binding.calendarView.scrollToMonth(currentMonth);
 
-        initRecyclerView();
         //fab跳转
         binding.fabAdd.setOnClickListener(v->{
-            navController.navigate(R.id.addConcertFragment);
+            Bundle args = new Bundle();
+            args.putString("selectedDate", selectedDate.toString());
+            navController.navigate(R.id.addConcertFragment, args);
         });
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        // TODO: Use the ViewModel
-
-        navHostFragment = (NavHostFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.my_nav_host_fragment);
-        navController = navHostFragment.getNavController();
-
-        mViewModel.getSelectedDate().observe(
-                getViewLifecycleOwner(),
-                date -> {
-                    selectedDate = date;
-                    binding.tvSelectedDate.setText(DateTimeFormatter.ofPattern("yyyy年M月d日").format(date));
-                    binding.calendarView.notifyCalendarChanged();
-                }
-        );
-
-        mViewModel.getMonthMarks().observe(
-                getViewLifecycleOwner(),
-                set -> {
-                    concertDates.clear();
-                    concertDates.addAll(set);
-                    binding.calendarView.notifyCalendarChanged();
-                }
-        );
-
-       mViewModel.getConcerts().observe(
-                getViewLifecycleOwner(),
-                concerts -> {
-                    adapter.submitList(concerts);
-                    binding.rvConcert.setVisibility(concerts.isEmpty() ? View.GONE : View.VISIBLE);
-                    binding.emptyView.setVisibility(concerts.isEmpty() ? View.VISIBLE : View.GONE);
-                }
-        );
     }
 
     @Override
@@ -153,6 +150,7 @@ public class HomeFragment extends Fragment {
     private void initRecyclerView() {
         adapter = new ConcertPreviewAdapter(
                 this::openDetail,
+                this::openEdit,
                 concert -> {
                     new MaterialAlertDialogBuilder(requireContext())
                             .setTitle("删除演出")
@@ -168,5 +166,11 @@ public class HomeFragment extends Fragment {
         );
         binding.rvConcert.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvConcert.setAdapter(adapter);
+    }
+
+    private void openEdit(ConcertEntity concert) {
+        Bundle args = new Bundle();
+        args.putLong("concertId", concert.getId());
+        navController.navigate(R.id.addConcertFragment, args);
     }
 }

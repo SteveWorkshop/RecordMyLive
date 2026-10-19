@@ -87,10 +87,11 @@ public class ConcertEntity implements Serializable {
     @Embedded(prefix = "seat_")
     private SeatInfo seat;
 
-    /**
-     * 票价（单位：元）
-     */
-    private int price;
+    /** 票面票价（单位：分） */
+    private long faceValuePriceCents;
+
+    /** 实付票价（单位：分） */
+    private long paidPriceCents;
 
     /**
      * 歌手（支持多人）
@@ -132,7 +133,8 @@ public class ConcertEntity implements Serializable {
         entity.setSeat(new SeatInfo());
         entity.setStatus(ConcertStatus.PLANNED);
         entity.setPurchaseChannel(PurchaseChannel.OTHER);
-        entity.setPrice(0);
+        entity.setPaidPriceCents(0);
+        entity.setFaceValuePriceCents(0);
         entity.setFavorite(false);
         entity.setTicketCollected(false);
         return entity;

@@ -1,46 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.google.android.material.card.MaterialCardView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cardCover"
-    style="@style/Widget.Material3.CardView.Elevated"
     android:layout_width="match_parent"
-    android:layout_height="220dp"
+    android:layout_height="wrap_content"
     android:layout_marginBottom="16dp">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/imgCover"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardCover"
+            style="@style/Widget.Material3.CardView.Elevated"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@null"
-            android:scaleType="centerCrop"/>
+            android:layout_height="220dp">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imgCover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"/>
+
+                <ImageView
+                    android:id="@+id/coverPlaceholder"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/baseline_add_photo_alternate_24px"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvCoverHint"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
             android:gravity="center"
-            android:orientation="vertical">
+            android:text="点击图片添加演出封面"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            style="@style/TextAppearance.Material3.BodyMedium"/>
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/baseline_add_photo_alternate_24px"/>
-
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="添加演出封面"
-                style="@style/TextAppearance.Material3.BodyLarge"/>
-
-        </LinearLayout>
-
-    </FrameLayout>
-
-</com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</LinearLayout>

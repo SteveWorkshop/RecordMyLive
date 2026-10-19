@@ -1,6 +1,8 @@
 package rachel.materialapps.recordmylive.logic.repository;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -9,7 +11,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
+import rachel.materialapps.recordmylive.logic.constants.AppConstants;
 import rachel.materialapps.recordmylive.logic.dao.ConcertDao;
 import rachel.materialapps.recordmylive.logic.dao.ConcertSongDao;
 import rachel.materialapps.recordmylive.logic.db.DatabaseManager;
@@ -18,6 +22,10 @@ import rachel.materialapps.recordmylive.logic.entity.ConcertSongEntity;
 import rachel.materialapps.recordmylive.logic.entity.dto.ConcertWithSongs;
 
 public class ConcertRepository {
+
+    public enum SaveResult {
+        SUCCESS, DAILY_LIMIT_REACHED, ERROR
+    }
 
     private static final String TAG = "ConcertRepository";
 
@@ -52,8 +60,38 @@ public class ConcertRepository {
         executor.execute(() -> concertDao.insert(entity));
     }
 
+    public void saveConcert(ConcertEntity entity, List<ConcertSongEntity> songs, Consumer<SaveResult> callback) {
+        executor.execute(() -> {
+            SaveResult result;
+            try {
+                boolean inserted = concertDao.saveConcertWithSongs(
+                        entity, songs, songDao, AppConstants.MAX_CONCERT_PER_DAY);
+                result = inserted ? SaveResult.SUCCESS : SaveResult.DAILY_LIMIT_REACHED;
+            } catch (Exception e) {
+                Log.e(TAG, "保存演出失败", e);
+                result = SaveResult.ERROR;
+            }
+            SaveResult saveResult = result;
+            new Handler(Looper.getMainLooper()).post(() -> callback.accept(saveResult));
+        });
+    }
+
     public void updateConcert(ConcertEntity entity) {
         executor.execute(() -> concertDao.update(entity));
+    }
+
+    public void updateConcert(ConcertEntity entity, List<ConcertSongEntity> songs, Consumer<Boolean> callback) {
+        executor.execute(() -> {
+            boolean updated;
+            try {
+                updated = concertDao.updateConcertWithSongs(entity, songs, songDao);
+            } catch (Exception e) {
+                Log.e(TAG, "更新演出失败", e);
+                updated = false;
+            }
+            boolean result = updated;
+            new Handler(Looper.getMainLooper()).post(() -> callback.accept(result));
+        });
     }
 
     public void deleteConcert(ConcertEntity entity) {

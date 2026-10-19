@@ -26,4 +26,14 @@ public class DetailViewModel extends AndroidViewModel {
                 repository::getConcertDetail
         );
     }
+
+    public LiveData<ConcertWithSongs> getDetail() {
+        return detail;
+    }
+
+    public void loadConcert(long id) {
+        if (concertId.getValue() == null || concertId.getValue() != id) {
+            concertId.setValue(id);
+        }
+    }
 }

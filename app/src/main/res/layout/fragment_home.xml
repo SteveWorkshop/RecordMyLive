@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="20dp"
-            android:text="2026 年 6 月"/>
+            android:text="正在加载..."/>
 
         <!-- Calendar Card（MD3核心升级点） -->
         <com.google.android.material.card.MaterialCardView
@@ -49,38 +49,44 @@
             android:padding="20dp"
             android:text="今日演出"/>
 
-        <!-- Recycler -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvConcert"
+        <!-- The list and empty state share the remaining height. -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"
-            android:paddingHorizontal="16dp"
-            android:paddingBottom="96dp"/>
-        <!-- EMPTY STATE（单独覆盖层） -->
-        <LinearLayout
-            android:id="@+id/emptyView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:layout_weight="1">
 
-            <ImageView
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:alpha="0.6"
-                android:src="@drawable/baseline_music_note_2_24px"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvConcert"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="96dp"/>
 
-            <com.google.android.material.textview.MaterialTextView
-                style="@style/TextAppearance.Material3.BodyLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="这一天没有演出"/>
+            <LinearLayout
+                android:id="@+id/emptyView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
 
-        </LinearLayout>
+                <ImageView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:alpha="0.6"
+                    android:src="@drawable/baseline_music_note_2_24px"/>
+
+                <com.google.android.material.textview.MaterialTextView
+                    style="@style/TextAppearance.Material3.BodyLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="这一天没有演出"/>
+
+            </LinearLayout>
+
+        </FrameLayout>
     </LinearLayout>
 
 

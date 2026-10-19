@@ -27,5 +27,9 @@
     <fragment
         android:id="@+id/detailFragment"
         android:name="rachel.materialapps.recordmylive.ui.pages.home.DetailFragment"
-        android:label="DetailFragment" />
+        android:label="DetailFragment">
+        <action
+            android:id="@+id/action_detail_to_edit"
+            app:destination="@id/addConcertFragment" />
+    </fragment>
 </navigation>

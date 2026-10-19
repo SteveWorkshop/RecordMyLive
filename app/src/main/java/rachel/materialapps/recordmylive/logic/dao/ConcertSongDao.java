@@ -32,4 +32,7 @@ public interface ConcertSongDao {
     @Query(" SELECT * FROM concert_song WHERE concertId=:concertId ORDER BY sortOrder")
     LiveData<List<ConcertSongEntity>> getSongs(long concertId);
 
+    @Query(" SELECT * FROM concert_song WHERE concertId=:concertId ORDER BY sortOrder")
+    List<ConcertSongEntity> getSongsSync(long concertId);
+
 }
