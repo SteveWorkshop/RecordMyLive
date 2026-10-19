@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:title="Crash Report"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <com.google.android.material.card.MaterialCardView android:layout_height="wrap_content" android:layout_width="match_parent">
+
+                <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent"
+                    android:padding="16dp"
+                    android:orientation="vertical">
+
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="⚠ 这不是你的错，而是我们的问题"
+                        android:textStyle="bold"
+                        android:textSize="20sp"/>
+
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="应用程序遇到问题，需要重新启动。如果您要寻求我们的支持，请将以下信息发送给我们的支持人员："/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:orientation="vertical">
+
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="计算机信息"
+                        android:textStyle="bold"/>
+
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:id="@+id/tvDevice"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:orientation="vertical">
+
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="堆栈跟踪日志"
+                        android:textStyle="bold"/>
+
+                    <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCrash"
+                            android:layout_width="match_parent"
+                            android:layout_height="300dp"
+                            android:gravity="top|start"
+                            android:inputType="textMultiLine"
+                            android:textIsSelectable="true"
+                            android:fontFamily="monospace"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:fabAlignmentMode="end">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <Button android:layout_height="wrap_content" android:layout_width="wrap_content"
+                android:id="@+id/btnCopy"
+                android:text="复制"/>
+
+            <Button android:layout_height="wrap_content" android:layout_width="wrap_content"
+                android:id="@+id/btnSave"
+                android:text="保存"/>
+
+            <Button android:layout_height="wrap_content" android:layout_width="wrap_content"
+                android:id="@+id/btnMail"
+                android:text="发送电子邮件"/>
+
+        </LinearLayout>
+
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/btnExit"
+        app:icon="@drawable/baseline_exit_to_app_24px"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp" android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

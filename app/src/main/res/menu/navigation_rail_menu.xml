@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home_page"
+        android:enabled="true"
+        android:icon="@drawable/baseline_home_24px"
+        android:title="主页"/>
+
+    <item
+        android:id="@+id/statistic_page"
+        android:enabled="true"
+        android:icon="@drawable/baseline_statistics_24px"
+        android:title="统计"/>
+
+    <item
+        android:id="@+id/my_page"
+        android:enabled="true"
+        android:icon="@drawable/baseline_my_24px"
+        android:title="我的"/>
+</menu>
