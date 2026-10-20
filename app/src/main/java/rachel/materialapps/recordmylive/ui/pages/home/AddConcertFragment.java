@@ -22,11 +22,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.text.InputFilter;
 
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.textfield.TextInputLayout;
@@ -76,7 +78,10 @@ public class AddConcertFragment extends Fragment {
 
     private LocalTime selectedTime;
 
+    private Integer selectedDurationMinutes;
+
     private ConcertType selectedConcertType;
+    private ConcertStatus selectedConcertStatus = ConcertStatus.PLANNED;
     private boolean editMode;
     private boolean formPopulated;
     private ConcertEntity originalConcert;
@@ -168,6 +173,8 @@ public class AddConcertFragment extends Fragment {
 
         });
 
+        binding.layoutBasicInfo.edtDuration.setOnClickListener(v -> showDurationPicker());
+
         binding.layoutLocation.edtCity.setOnClickListener(v ->
                 ChinaRegionPicker.show(requireContext(), selected -> {
                     if (binding != null) {
@@ -198,6 +205,17 @@ public class AddConcertFragment extends Fragment {
                         selectedConcertType = values[position]
         );
 
+        ConcertStatus[] statusValues = ConcertStatus.values();
+        String[] statusNames = new String[statusValues.length];
+        for (int i = 0; i < statusValues.length; i++) {
+            statusNames[i] = statusValues[i].getDisplayName();
+        }
+        binding.layoutBasicInfo.actStatus.setAdapter(new ArrayAdapter<>(
+                requireContext(), android.R.layout.simple_list_item_1, statusNames));
+        binding.layoutBasicInfo.actStatus.setText(selectedConcertStatus.getDisplayName(), false);
+        binding.layoutBasicInfo.actStatus.setOnItemClickListener(
+                (parent, statusView, position, id) -> selectedConcertStatus = statusValues[position]);
+
         View root=binding.getRoot();
 
         return root;//inflater.inflate(R.layout.fragment_add_concert, container, false);
@@ -214,6 +232,12 @@ public class AddConcertFragment extends Fragment {
             selectedDate = date == null ? null : LocalDate.parse(date);
             selectedTime = time == null ? null : LocalTime.parse(time);
             selectedConcertType = type == null ? null : ConcertType.valueOf(type);
+            String status = savedInstanceState.getString("selectedConcertStatus");
+            selectedConcertStatus = status == null
+                    ? ConcertStatus.PLANNED : ConcertStatus.valueOf(status);
+            if (savedInstanceState.containsKey("selectedDurationMinutes")) {
+                selectedDurationMinutes = savedInstanceState.getInt("selectedDurationMinutes");
+            }
             String coverUri = savedInstanceState.getString("selectedCoverUri");
             selectedCoverUri = coverUri == null ? null : Uri.parse(coverUri);
             if (selectedCoverUri != null) {
@@ -243,6 +267,8 @@ public class AddConcertFragment extends Fragment {
         if (selectedConcertType != null) {
             binding.layoutBasicInfo.actType.setText(selectedConcertType.getDisplayName(), false);
         }
+        binding.layoutBasicInfo.actStatus.setText(selectedConcertStatus.getDisplayName(), false);
+        updateDurationText();
         initToolbar();
         editMode = getArguments() != null && getArguments().containsKey("concertId");
         if (editMode) {
@@ -290,6 +316,10 @@ public class AddConcertFragment extends Fragment {
         outState.putString("selectedDate", selectedDate == null ? null : selectedDate.toString());
         outState.putString("selectedTime", selectedTime == null ? null : selectedTime.toString());
         outState.putString("selectedConcertType", selectedConcertType == null ? null : selectedConcertType.name());
+        outState.putString("selectedConcertStatus", selectedConcertStatus.name());
+        if (selectedDurationMinutes != null) {
+            outState.putInt("selectedDurationMinutes", selectedDurationMinutes);
+        }
         outState.putString("selectedCoverUri", selectedCoverUri == null ? null : selectedCoverUri.toString());
         syncSongsFromViews();
         outState.putSerializable("songs", new ArrayList<>(songs));
@@ -448,6 +478,8 @@ public class AddConcertFragment extends Fragment {
         selectedDate = originalConcert.getDate();
         selectedTime = originalConcert.getTime();
         selectedConcertType = originalConcert.getType();
+        selectedConcertStatus = originalConcert.getStatus() == null
+                ? ConcertStatus.PLANNED : originalConcert.getStatus();
         if (selectedCoverUri == null && originalConcert.getCoverPath() != null
                 && !originalConcert.getCoverPath().isEmpty()) {
             selectedCoverUri = Uri.parse(originalConcert.getCoverPath());
@@ -455,8 +487,14 @@ public class AddConcertFragment extends Fragment {
         }
         binding.layoutBasicInfo.edtDate.setText(selectedDate == null ? "" : selectedDate.toString());
         binding.layoutBasicInfo.edtTime.setText(selectedTime == null ? "" : selectedTime.toString());
+        Integer durationMinutes = originalConcert.getDurationMinutes();
+        if (durationMinutes != null && durationMinutes > 0) {
+            selectedDurationMinutes = durationMinutes;
+            updateDurationText();
+        }
         binding.layoutBasicInfo.actType.setText(selectedConcertType == null
                 ? "" : selectedConcertType.getDisplayName(), false);
+        binding.layoutBasicInfo.actStatus.setText(selectedConcertStatus.getDisplayName(), false);
         boolean pricesEqual = originalConcert.getFaceValuePriceCents()
                 == originalConcert.getPaidPriceCents();
         binding.layoutTicketPrice.checkPricesEqual.setChecked(pricesEqual);
@@ -514,6 +552,8 @@ public class AddConcertFragment extends Fragment {
         concert.setType(selectedConcertType);
         concert.setDate(selectedDate);
         concert.setTime(selectedTime);
+        concert.setDurationMinutes(selectedDurationMinutes);
+        concert.setStatus(selectedConcertStatus);
         concert.setCity(binding.layoutLocation.edtCity.getText().toString().trim());
         concert.setVenue(binding.layoutLocation.edtVenue.getText().toString().trim());
         long faceValuePriceCents;
@@ -538,7 +578,6 @@ public class AddConcertFragment extends Fragment {
 
         if (!editMode) {
             concert.setPurchaseChannel(PurchaseChannel.OTHER);
-            concert.setStatus(ConcertStatus.PLANNED);
             concert.setFavorite(false);
             concert.setTicketCollected(false);
             concert.setNote(null);
@@ -711,6 +750,55 @@ public class AddConcertFragment extends Fragment {
     private String emptyToNull(String value) {
         String trimmed = value == null ? "" : value.trim();
         return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    private void showDurationPicker() {
+        View pickerView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_duration_picker, null);
+        NumberPicker hoursPicker = pickerView.findViewById(R.id.pickerHours);
+        NumberPicker minutesPicker = pickerView.findViewById(R.id.pickerMinutes);
+        hoursPicker.setMinValue(0);
+        hoursPicker.setMaxValue(99);
+        minutesPicker.setMinValue(0);
+        minutesPicker.setMaxValue(59);
+        hoursPicker.setValue(selectedDurationMinutes == null ? 2 : selectedDurationMinutes / 60);
+        minutesPicker.setValue(selectedDurationMinutes == null ? 0 : selectedDurationMinutes % 60);
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("选择演出时长")
+                .setView(pickerView)
+                .setNeutralButton("清除", (dialog, which) -> {
+                    selectedDurationMinutes = null;
+                    updateDurationText();
+                })
+                .setNegativeButton("取消", null)
+                .setPositiveButton("确定", (dialog, which) -> {
+                    int totalMinutes = hoursPicker.getValue() * 60 + minutesPicker.getValue();
+                    if (totalMinutes == 0) {
+                        Snackbar.make(binding.getRoot(), "演出时长需大于 0 分钟",
+                                Snackbar.LENGTH_LONG).show();
+                        return;
+                    }
+                    selectedDurationMinutes = totalMinutes;
+                    updateDurationText();
+                })
+                .show();
+    }
+
+    private void updateDurationText() {
+        if (binding == null) {
+            return;
+        }
+        if (selectedDurationMinutes == null) {
+            binding.layoutBasicInfo.edtDuration.setText("");
+            return;
+        }
+        int hours = selectedDurationMinutes / 60;
+        int minutes = selectedDurationMinutes % 60;
+        String text = hours == 0 ? minutes + "分钟"
+                : minutes == 0 ? hours + "小时"
+                : hours + "小时" + minutes + "分钟";
+        binding.layoutBasicInfo.edtDuration.setText(text);
     }
 
 }

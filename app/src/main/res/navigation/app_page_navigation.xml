@@ -32,4 +32,9 @@
             android:id="@+id/action_detail_to_edit"
             app:destination="@id/addConcertFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/timeLineFragment"
+        android:name="rachel.materialapps.recordmylive.ui.pages.timeline.TimeLineFragment"
+        android:label="fragment_time_line"
+        tools:layout="@layout/fragment_time_line" />
 </navigation>

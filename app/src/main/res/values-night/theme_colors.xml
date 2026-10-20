@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Warm neutral surfaces keep the traditional palettes quiet and readable. -->
+    <style name="ThemeOverlay.RecordMyLive.Palette" parent="">
+        <item name="android:colorBackground">#131410</item>
+        <item name="colorOnBackground">#E4E3DC</item>
+        <item name="colorSurface">#131410</item>
+        <item name="colorOnSurface">#E4E3DC</item>
+        <item name="colorSurfaceVariant">#454740</item>
+        <item name="colorOnSurfaceVariant">#C5C8BE</item>
+        <item name="colorOutline">#8F9389</item>
+        <item name="colorOutlineVariant">#454740</item>
+        <item name="colorSurfaceInverse">#E4E3DC</item>
+        <item name="colorOnSurfaceInverse">#30312D</item>
+        <item name="colorPrimaryInverse">#47664F</item>
+        <item name="colorSurfaceContainerLowest">#0E0F0C</item>
+        <item name="colorSurfaceContainerLow">#1B1C18</item>
+        <item name="colorSurfaceContainer">#1F201C</item>
+        <item name="colorSurfaceContainerHigh">#292A26</item>
+        <item name="colorSurfaceContainerHighest">#343530</item>
+        <item name="colorSurfaceBright">#393A35</item>
+        <item name="colorSurfaceDim">#131410</item>
+        <item name="android:colorAccent">#AED0B2</item>
+    </style>
+
+    <style name="ThemeOverlay.RecordMyLive.Celadon" parent="ThemeOverlay.RecordMyLive.Palette">
+        <item name="colorPrimary">#AED0B2</item>
+        <item name="colorOnPrimary">#193721</item>
+        <item name="colorPrimaryContainer">#2F4E37</item>
+        <item name="colorOnPrimaryContainer">#C9ECCD</item>
+        <item name="colorSecondary">#B9CCB6</item>
+        <item name="colorOnSecondary">#253425</item>
+        <item name="colorSecondaryContainer">#3B4B3B</item>
+        <item name="colorOnSecondaryContainer">#D5E8D1</item>
+        <item name="colorTertiary">#A2CDD0</item>
+        <item name="colorOnTertiary">#00363A</item>
+        <item name="colorTertiaryContainer">#224C50</item>
+        <item name="colorOnTertiaryContainer">#BEEAED</item>
+        <item name="colorPrimaryInverse">#47664F</item>
+        <item name="android:colorAccent">#AED0B2</item>
+    </style>
+
+    <style name="ThemeOverlay.RecordMyLive.Indigo" parent="ThemeOverlay.RecordMyLive.Palette">
+        <item name="colorPrimary">#B6C7E7</item>
+        <item name="colorOnPrimary">#203149</item>
+        <item name="colorPrimaryContainer">#364861</item>
+        <item name="colorOnPrimaryContainer">#D5E3FF</item>
+        <item name="colorSecondary">#C1C7D6</item>
+        <item name="colorOnSecondary">#2B3340</item>
+        <item name="colorSecondaryContainer">#424A57</item>
+        <item name="colorOnSecondaryContainer">#DDE3F2</item>
+        <item name="colorTertiary">#DBBCE2</item>
+        <item name="colorOnTertiary">#3E2845</item>
+        <item name="colorTertiaryContainer">#553E5D</item>
+        <item name="colorOnTertiaryContainer">#F8D8FE</item>
+        <item name="colorPrimaryInverse">#4E607B</item>
+        <item name="android:colorAccent">#B6C7E7</item>
+    </style>
+
+    <style name="ThemeOverlay.RecordMyLive.Rouge" parent="ThemeOverlay.RecordMyLive.Palette">
+        <item name="colorPrimary">#FFB1C5</item>
+        <item name="colorOnPrimary">#541D2E</item>
+        <item name="colorPrimaryContainer">#703344</item>
+        <item name="colorOnPrimaryContainer">#FFD9E1</item>
+        <item name="colorSecondary">#E4BDC6</item>
+        <item name="colorOnSecondary">#432931</item>
+        <item name="colorSecondaryContainer">#5C3F47</item>
+        <item name="colorOnSecondaryContainer">#FFD9E1</item>
+        <item name="colorTertiary">#EFBF98</item>
+        <item name="colorOnTertiary">#48290F</item>
+        <item name="colorTertiaryContainer">#624025</item>
+        <item name="colorOnTertiaryContainer">#FFDCBF</item>
+        <item name="colorPrimaryInverse">#8C4A5C</item>
+        <item name="android:colorAccent">#FFB1C5</item>
+    </style>
+
+    <style name="ThemeOverlay.RecordMyLive.Sandalwood" parent="ThemeOverlay.RecordMyLive.Palette">
+        <item name="colorPrimary">#EBBF98</item>
+        <item name="colorOnPrimary">#452B12</item>
+        <item name="colorPrimaryContainer">#5F4126</item>
+        <item name="colorOnPrimaryContainer">#FFDCBF</item>
+        <item name="colorSecondary">#DCC2AE</item>
+        <item name="colorOnSecondary">#3E2D20</item>
+        <item name="colorSecondaryContainer">#564335</item>
+        <item name="colorOnSecondaryContainer">#F9DEC9</item>
+        <item name="colorTertiary">#C1CD9E</item>
+        <item name="colorOnTertiary">#2C3415</item>
+        <item name="colorTertiaryContainer">#424B29</item>
+        <item name="colorOnTertiaryContainer">#DDE9B8</item>
+        <item name="colorPrimaryInverse">#79583A</item>
+        <item name="android:colorAccent">#EBBF98</item>
+    </style>
+</resources>

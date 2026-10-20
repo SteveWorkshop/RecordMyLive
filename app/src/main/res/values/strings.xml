@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">歌笺</string>
+    <string name="timeline_empty">暂无演出</string>
+    <string name="timeline_title">时间线</string>
+    <string name="timeline_time_pending">时间待定</string>
+    <string name="timeline_date_time">%1$s %2$s</string>
+    <string name="system_settings">系统设置</string>
+    <string name="about_application">关于此应用程序</string>
+    <string name="app_version">版本 %1$s</string>
+    <string name="app_version_unknown">版本未知</string>
+    <string name="appearance">外观</string>
+    <string name="theme_follow_system">跟随系统</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+    <string name="theme_color">主题颜色</string>
+    <string name="display_mode">显示模式</string>
+    <string name="theme_color_hint">随壁纸流转，或选一抹东方雅色</string>
+    <string name="palette_dynamic">动态颜色</string>
+    <string name="palette_celadon">青瓷</string>
+    <string name="palette_indigo">黛蓝</string>
+    <string name="palette_rouge">胭脂</string>
+    <string name="palette_sandalwood">檀香</string>
+    <string name="palette_dynamic_hint">跟随壁纸，自然相衬</string>
+    <string name="palette_celadon_hint">温润青绿</string>
+    <string name="palette_indigo_hint">沉静蓝灰</string>
+    <string name="palette_rouge_hint">柔和绛红</string>
+    <string name="palette_sandalwood_hint">雅致茶棕</string>
+    <string name="color_dynamic">动态颜色 · 跟随壁纸</string>
+    <string name="color_celadon">青瓷 · 温润青绿</string>
+    <string name="color_indigo">黛蓝 · 沉静蓝灰</string>
+    <string name="color_rouge">胭脂 · 柔和绛红</string>
+    <string name="color_sandalwood">檀香 · 雅致茶棕</string>
 </resources>

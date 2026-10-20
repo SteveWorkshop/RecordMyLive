@@ -3,6 +3,7 @@ package rachel.materialapps.recordmylive;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import androidx.room.Room;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -46,6 +47,23 @@ public class ConcertSaveTest {
     @After
     public void tearDown() {
         database.close();
+    }
+
+    @Test
+    public void insertAndUpdateRejectMissingDate() {
+        ConcertEntity draft = ConcertEntity.createEmpty();
+        try {
+            dao.insert(draft);
+            fail("不应保存没有日期的演出");
+        } catch (NullPointerException expected) {
+            assertEquals("演出日期不能为空", expected.getMessage());
+        }
+        try {
+            dao.update(draft);
+            fail("不应更新为没有日期的演出");
+        } catch (NullPointerException expected) {
+            assertEquals("演出日期不能为空", expected.getMessage());
+        }
     }
 
     @Test

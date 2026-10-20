@@ -7,6 +7,14 @@
         android:title="主页"/>
 
     <item
+        android:id="@+id/timeline_page"
+        android:enabled="true"
+        android:icon="@drawable/baseline_view_timeline_24px"
+        android:title="时间线">
+
+    </item>
+
+    <item
         android:id="@+id/statistic_page"
         android:enabled="true"
         android:icon="@drawable/baseline_statistics_24px"

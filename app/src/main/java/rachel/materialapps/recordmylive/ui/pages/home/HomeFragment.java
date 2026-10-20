@@ -11,6 +11,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
@@ -81,7 +83,7 @@ public class HomeFragment extends Fragment {
 
         mViewModel.getSelectedDate().observe(getViewLifecycleOwner(), date -> {
             selectedDate = date;
-            binding.tvSelectedDate.setText(DateTimeFormatter.ofPattern("yyyy年M月d日").format(date));
+            binding.tvSelectedDate.setText(DateTimeFormatter.ofPattern("M月d日").format(date));
             binding.calendarView.notifyCalendarChanged();
         });
 
@@ -95,6 +97,19 @@ public class HomeFragment extends Fragment {
             adapter.submitList(concerts);
             binding.rvConcert.setVisibility(concerts.isEmpty() ? View.GONE : View.VISIBLE);
             binding.emptyView.setVisibility(concerts.isEmpty() ? View.VISIBLE : View.GONE);
+        });
+
+        mViewModel.getUpcomingConcerts().observe(getViewLifecycleOwner(), concerts -> {
+            LocalDate today = LocalDate.now();
+            String countdownText;
+            if (concerts == null || concerts.isEmpty()) {
+                countdownText = "暂无安排中的演出";
+            } else {
+                LocalDate nextDate = concerts.get(0).getDate();
+                long days = ChronoUnit.DAYS.between(today, nextDate);
+                countdownText = "距离下次演出还有 " + days + " 天！🎉";
+            }
+            binding.tvNextConcert.setText(countdownText);
         });
 
         navController.getCurrentBackStackEntry().getSavedStateHandle()
@@ -119,7 +134,7 @@ public class HomeFragment extends Fragment {
         binding.calendarView.setup(currentMonth.minusMonths(24), currentMonth.plusMonths(24), DayOfWeek.MONDAY);
         binding.calendarView.setMonthScrollListener(month -> {
             YearMonth ym = month.getYearMonth();
-            System.out.println("获得当前年月");
+            Log.d(TAG, "onViewCreated: 获得当前年月");
             binding.tvMonth.setText(DateTimeFormatter.ofPattern("yyyy年M月").format(ym.atDay(1)));
             mViewModel.setMonth(ym);
             return Unit.INSTANCE;

@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
             if(id==R.id.home_page){
                 navController.navigate(R.id.homeFragment);
             }
+            else if(id==R.id.timeline_page){
+                navController.navigate(R.id.timeLineFragment);
+            }
             else if(id==R.id.statistic_page){
                 navController.navigate(R.id.statisticsFragment);
             }

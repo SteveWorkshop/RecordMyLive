@@ -63,6 +63,10 @@ public class HomeViewModel extends AndroidViewModel {
         return concerts;
     }
 
+    public LiveData<List<ConcertEntity>> getUpcomingConcerts() {
+        return repository.getUpcoming(LocalDate.now());
+    }
+
     public LiveData<Set<LocalDate>> getMonthMarks(){
         return Transformations.switchMap(currentMonth, month ->{
             LocalDate start = month.atDay(1);

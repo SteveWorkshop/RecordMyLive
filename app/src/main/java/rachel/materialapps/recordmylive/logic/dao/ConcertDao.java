@@ -18,11 +18,21 @@ import rachel.materialapps.recordmylive.logic.entity.dto.ConcertWithSongs;
 @Dao
 public interface ConcertDao {
 
+    default long insert(ConcertEntity concert) {
+        concert.requireDate();
+        return insertValidated(concert);
+    }
+
     @Insert
-    long insert(ConcertEntity concert);
+    long insertValidated(ConcertEntity concert);
+
+    default int update(ConcertEntity concert) {
+        concert.requireDate();
+        return updateValidated(concert);
+    }
 
     @Update
-    int update(ConcertEntity concert);
+    int updateValidated(ConcertEntity concert);
 
     @Delete
     void delete(ConcertEntity concert);
@@ -35,6 +45,9 @@ public interface ConcertDao {
 
     @Query("SELECT * FROM concert WHERE date BETWEEN :start AND :end")
     LiveData<List<ConcertEntity>> getByMonth(LocalDate start, LocalDate end);
+
+    @Query("SELECT * FROM concert WHERE date >= :today ORDER BY date ASC, time ASC")
+    LiveData<List<ConcertEntity>> getUpcoming(LocalDate today);
 
     @Query("SELECT * FROM concert WHERE favorite=1 ORDER BY date DESC")
     LiveData<List<ConcertEntity>> getFavorites();

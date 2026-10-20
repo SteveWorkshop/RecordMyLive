@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.chip.Chip;
 
 import java.util.ArrayList;
@@ -88,6 +89,14 @@ public class DetailFragment extends Fragment {
         time += concert.getTime() == null ? " 时间待定" : " " + concert.getTime();
         binding.tvTime.setText(time);
 
+        Integer durationMinutes = concert.getDurationMinutes();
+        if (durationMinutes != null && durationMinutes > 0) {
+            binding.tvDuration.setText("演出时长：" + formatDuration(durationMinutes));
+            binding.tvDuration.setVisibility(View.VISIBLE);
+        } else {
+            binding.tvDuration.setVisibility(View.GONE);
+        }
+
         String location = concert.getCity() == null ? "" : concert.getCity();
         if (concert.getVenue() != null && !concert.getVenue().isEmpty()) {
             location += (location.isEmpty() ? "" : " · ") + concert.getVenue();
@@ -123,13 +132,16 @@ public class DetailFragment extends Fragment {
             }
         }
 
-        if (concert.getCoverPath() != null && !concert.getCoverPath().isEmpty()) {
-            binding.imgCover.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
-            binding.imgCover.setImageURI(Uri.parse(concert.getCoverPath()));
-        } else {
-            binding.imgCover.setScaleType(android.widget.ImageView.ScaleType.CENTER_INSIDE);
-            binding.imgCover.setImageResource(R.drawable.baseline_imagesmode_24px);
-        }
+        String cover = concert.getCoverPath();
+        // 按封面控件尺寸异步解码，避免进入详情时在主线程读取大图。
+        Glide.with(this)
+                .load(cover == null || cover.trim().isEmpty() ? null : Uri.parse(cover))
+                .placeholder(R.drawable.baseline_imagesmode_24px)
+                .fallback(R.drawable.baseline_imagesmode_24px)
+                .error(R.drawable.baseline_imagesmode_24px)
+                .centerCrop()
+                .dontAnimate()
+                .into(binding.imgCover);
         binding.tvNote.setText(concert.getNote() == null || concert.getNote().isEmpty()
                 ? "无备注" : concert.getNote());
         List<ConcertSongEntity> songs = detail.songs == null ? new ArrayList<>() : detail.songs;
@@ -144,8 +156,21 @@ public class DetailFragment extends Fragment {
         }
     }
 
+    private String formatDuration(int totalMinutes) {
+        int hours = totalMinutes / 60;
+        int minutes = totalMinutes % 60;
+        if (hours == 0) {
+            return minutes + "分钟";
+        }
+        if (minutes == 0) {
+            return hours + "小时";
+        }
+        return hours + "小时" + minutes + "分钟";
+    }
+
     @Override
     public void onDestroyView() {
+        Glide.with(this).clear(binding.imgCover);
         super.onDestroyView();
         binding = null;
     }

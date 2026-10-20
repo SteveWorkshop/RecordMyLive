@@ -99,6 +99,14 @@
                         android:layout_marginTop="8dp"
                         android:text=""/>
 
+                    <TextView
+                        android:id="@+id/tvDuration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text=""
+                        android:visibility="gone"/>
+
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>

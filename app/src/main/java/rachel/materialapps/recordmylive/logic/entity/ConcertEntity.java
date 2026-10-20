@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import lombok.Data;
 import lombok.ToString;
@@ -59,15 +60,28 @@ public class ConcertEntity implements Serializable {
     private ConcertType type;
 
     /**
-     * 演出日期
+     * 演出日期（必填；新建草稿须在保存前设置）
      */
     //@NonNull
     private LocalDate date;
+
+    public void setDate(@NonNull LocalDate date) {
+        this.date = Objects.requireNonNull(date, "演出日期不能为空");
+    }
+
+    public void requireDate() {
+        Objects.requireNonNull(date, "演出日期不能为空");
+    }
 
     /**
      * 演出时间（允许为空）
      */
     private LocalTime time;
+
+    /**
+     * 演出时长（单位：分钟，允许为空）
+     */
+    private Integer durationMinutes;
 
     /**
      * 城市
@@ -135,6 +149,7 @@ public class ConcertEntity implements Serializable {
         entity.setPurchaseChannel(PurchaseChannel.OTHER);
         entity.setPaidPriceCents(0);
         entity.setFaceValuePriceCents(0);
+        entity.setDurationMinutes(null);
         entity.setFavorite(false);
         entity.setTicketCollected(false);
         return entity;

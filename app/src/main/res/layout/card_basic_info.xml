@@ -52,6 +52,22 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutStatus"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="演出状态">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/actStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,7 +80,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="日期">
+                android:hint="日期（必填）">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtDate"
@@ -84,7 +100,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="时间">
+                android:hint="时间（选填）">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtTime"
@@ -96,6 +112,25 @@
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutDuration"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="演出时长（选填）"
+            app:helperText="点击选择小时和分钟">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtDuration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:cursorVisible="false"
+                android:focusable="false"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
 

@@ -111,6 +111,10 @@ public class ConcertRepository {
         return concertDao.getByMonth(start, end);
     }
 
+    public LiveData<List<ConcertEntity>> getUpcoming(LocalDate today) {
+        return concertDao.getUpcoming(today);
+    }
+
     public int countByDate(LocalDate date) {
         return concertDao.countByDate(date);
     }

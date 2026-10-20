@@ -1,13 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.pages.my.MyFragment">
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+ android:layout_width="match_parent" android:layout_height="match_parent" android:background="?attr/colorSurface" android:fillViewport="true">
+ <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
+ <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="0dp" android:text="@string/system_settings" android:textAppearance="?attr/textAppearanceHeadlineSmall" android:textColor="?attr/colorOnSurface" />
+ <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="28dp" android:text="@string/display_mode" android:textAppearance="?attr/textAppearanceTitleMedium" android:textColor="?attr/colorOnSurface" />
+ <com.google.android.material.button.MaterialButtonToggleGroup android:id="@+id/display_mode_group" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" app:selectionRequired="true" app:singleSelection="true">
+ <com.google.android.material.button.MaterialButton android:id="@+id/mode_system" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:minWidth="0dp" android:minHeight="56dp" android:paddingHorizontal="4dp" android:text="@string/theme_follow_system" android:textSize="14sp" />
+ <com.google.android.material.button.MaterialButton android:id="@+id/mode_light" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:minWidth="0dp" android:minHeight="56dp" android:paddingHorizontal="4dp" android:text="@string/theme_light" android:textSize="14sp" />
+ <com.google.android.material.button.MaterialButton android:id="@+id/mode_dark" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:minWidth="0dp" android:minHeight="56dp" android:paddingHorizontal="4dp" android:text="@string/theme_dark" android:textSize="14sp" />
+ </com.google.android.material.button.MaterialButtonToggleGroup>
+ <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="28dp" android:text="@string/theme_color" android:textAppearance="?attr/textAppearanceTitleMedium" android:textColor="?attr/colorOnSurface" />
+ <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="@string/theme_color_hint" android:textAppearance="?attr/textAppearanceBodyMedium" android:textColor="?attr/colorOnSurfaceVariant" />
+ <GridLayout android:id="@+id/color_options" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:columnCount="2" />
+ <com.google.android.material.card.MaterialCardView
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     android:layout_marginTop="16dp"
+     app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+     app:cardCornerRadius="20dp"
+     app:cardElevation="0dp"
+     app:strokeColor="?attr/colorOutlineVariant"
+     app:strokeWidth="1dp">
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:orientation="vertical"
+         android:padding="20dp">
+         <TextView
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:accessibilityHeading="true"
+             android:text="@string/about_application"
+             android:textAppearance="?attr/textAppearanceTitleMedium"
+             android:textColor="?attr/colorOnSurface" />
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="20dp"
+             android:gravity="center_vertical"
+             android:orientation="horizontal">
+             <ImageView
+                 android:layout_width="48dp"
+                 android:layout_height="48dp"
+                 android:importantForAccessibility="no"
+                 android:src="@mipmap/ic_launcher_round" />
+             <LinearLayout
+                 android:layout_width="0dp"
+                 android:layout_height="wrap_content"
+                 android:layout_weight="1"
+                 android:layout_marginStart="16dp"
+                 android:orientation="vertical">
+                 <TextView
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:text="@string/app_name"
+                     android:textAppearance="?attr/textAppearanceTitleLarge"
+                     android:textColor="?attr/colorOnSurface" />
+                 <TextView
+                     android:id="@+id/app_version"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:layout_marginTop="4dp"
+                     android:textAppearance="?attr/textAppearanceBodyMedium"
+                     android:textColor="?attr/colorOnSurfaceVariant" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="333" />
+                 <TextView
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:layout_marginTop="4dp"
+                     android:textAppearance="?attr/textAppearanceBodyMedium"
+                     android:text="这是一款用于记录演出信息，帮助您管理预算与行程的应用程序，但它未来的功能将不止于此。">
 
-</FrameLayout>
+                 </TextView>
+             </LinearLayout>
+         </LinearLayout>
+     </LinearLayout>
+ </com.google.android.material.card.MaterialCardView>
+ </LinearLayout>
+</androidx.core.widget.NestedScrollView>
