@@ -25,7 +25,6 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.text.InputFilter;
 
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -728,11 +727,6 @@ public class AddConcertFragment extends Fragment {
             EditText input = new EditText(requireContext());
             input.setId(R.id.edtArtistName);
             input.setSingleLine(true);
-            input.setFilters(new InputFilter[]{(source, start, end, dest, dstart, dend) -> {
-                String filtered = ArtistNameNormalizer.normalize(source.subSequence(start, end).toString());
-                return filtered.equals(source.subSequence(start, end).toString())
-                        ? null : filtered;
-            }});
             input.setText(artists.get(i));
             inputLayout.addView(input, new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

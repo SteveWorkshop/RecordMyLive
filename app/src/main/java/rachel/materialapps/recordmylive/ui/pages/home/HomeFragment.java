@@ -138,10 +138,15 @@ public class HomeFragment extends Fragment {
 
         YearMonth currentMonth = YearMonth.now();
         binding.calendarView.setup(currentMonth.minusMonths(24), currentMonth.plusMonths(24), DayOfWeek.MONDAY);
+        FragmentHomeBinding viewBinding = binding;
         binding.calendarView.setMonthScrollListener(month -> {
+            // A resize can destroy this view while the calendar still has a queued scroll callback.
+            if (binding != viewBinding) {
+                return Unit.INSTANCE;
+            }
             YearMonth ym = month.getYearMonth();
             Log.d(TAG, "onViewCreated: 获得当前年月");
-            binding.tvMonth.setText(DateTimeFormatter.ofPattern("yyyy年M月").format(ym.atDay(1)));
+            viewBinding.tvMonth.setText(DateTimeFormatter.ofPattern("yyyy年M月").format(ym.atDay(1)));
             mViewModel.setMonth(ym);
             return Unit.INSTANCE;
         });
@@ -158,12 +163,13 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        // Invalidate callbacks before Fragment teardown can dispatch pending layout work.
+        binding = null;
         if (deleteDialog != null) {
             deleteDialog.dismiss();
             deleteDialog = null;
         }
         super.onDestroyView();
-        binding=null;
     }
 
     private void openDetail(ConcertEntity concert) {

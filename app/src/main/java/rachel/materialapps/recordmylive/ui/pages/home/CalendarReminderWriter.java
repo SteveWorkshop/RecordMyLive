@@ -69,7 +69,7 @@ final class CalendarReminderWriter {
                     String name = cursor.getString(1);
                     String account = cursor.getString(2);
                     calendars.add(new CalendarOption(cursor.getLong(0),
-                            (name == null ? "日历" : name) + " · " + (account == null ? "本机" : account)));
+                            (name == null ? "日历" : name) + " · " + (account == null ? "这台电脑" : account)));
                 }
             }
         }

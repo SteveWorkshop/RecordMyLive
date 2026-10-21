@@ -6,6 +6,9 @@
    See https://developer.android.com/about/versions/12/backup-restore
 -->
 <full-backup-content>
+    <exclude domain="file" path="profile_images/" />
+    <exclude domain="sharedpref" path="local_profile.xml" />
+    <exclude domain="file" path="artist_images/" />
     <!--
    <include domain="sharedpref" path="."/>
    <exclude domain="sharedpref" path="device.xml"/>

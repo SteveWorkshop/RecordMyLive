@@ -20,7 +20,8 @@ public class ExpensePersistenceTest {
     @Test
     public void sameCategoryAllowsMultipleRowsAndConcertDeletionCascades() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        try (AppDatabase db = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build()) {
+        AppDatabase db = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
+        try {
             ConcertEntity concert = concert();
             concert.setId(db.concertDao().insert(concert));
             ExpenseEntity first = expense(concert.getId(), 20000);
@@ -37,6 +38,8 @@ public class ExpensePersistenceTest {
             assertEquals(0, db.concertDao().countByDate(concert.getDate()));
             assertEquals(0, db.concertDao().delete(concert));
             assertTrue(db.expenseDao().getForConcertSync(concert.getId()).isEmpty());
+        } finally {
+            db.close();
         }
     }
 
@@ -46,20 +49,28 @@ public class ExpensePersistenceTest {
         String name = "expense-migration-test.db";
         context.deleteDatabase(name);
         try {
-            // Build the previous schema by removing the only table added in version 7.
-            try (AppDatabase db = Room.databaseBuilder(context, AppDatabase.class, name).build()) {
-                db.concertDao().insert(concert());
+            // Reconstruct version 6 by removing the tables added since then.
+            AppDatabase initial = Room.databaseBuilder(context, AppDatabase.class, name).build();
+            try {
+                initial.concertDao().insert(concert());
+            } finally {
+                initial.close();
             }
             try (SQLiteDatabase old = SQLiteDatabase.openDatabase(context.getDatabasePath(name).getPath(),
                     null, SQLiteDatabase.OPEN_READWRITE)) {
                 old.execSQL("DROP TABLE expense");
+                old.execSQL("DROP TABLE favorite_artist");
                 old.setVersion(6);
             }
-            try (AppDatabase db = Room.databaseBuilder(context, AppDatabase.class, name)
-                    .addMigrations(DatabaseManager.MIGRATION_6_7).build()) {
+            AppDatabase db = Room.databaseBuilder(context, AppDatabase.class, name)
+                    .addMigrations(DatabaseManager.MIGRATION_6_7, DatabaseManager.MIGRATION_7_8,
+                            DatabaseManager.MIGRATION_8_9, DatabaseManager.MIGRATION_9_10).build();
+            try {
                 assertEquals(1, db.concertDao().countByDate(LocalDate.of(2026, 10, 21)));
                 assertTrue(db.expenseDao().insert(expense(1, 12000)) > 0);
                 assertEquals(1, db.expenseDao().getForConcertSync(1).size());
+            } finally {
+                db.close();
             }
         } finally {
             context.deleteDatabase(name);
@@ -68,6 +79,7 @@ public class ExpensePersistenceTest {
 
     private ConcertEntity concert() {
         ConcertEntity concert = ConcertEntity.createEmpty();
+        concert.setType(rachel.materialapps.recordmylive.logic.constants.ConcertType.CONCERT);
         concert.setName("费用测试");
         concert.setDate(LocalDate.of(2026, 10, 21));
         concert.setTicketSaleDate(LocalDate.of(2026, 9, 1));

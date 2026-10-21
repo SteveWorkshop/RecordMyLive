@@ -3,6 +3,7 @@ agp = "9.4.1"
 desugar_jdk_libs = "2.1.5"
 gson = "2.14.0"
 glide = "4.16.0"
+nearby = "19.5.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
@@ -25,6 +26,7 @@ calendar = "2.7.0"
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+play-services-nearby = { module = "com.google.android.gms:play-services-nearby", version.ref = "nearby" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

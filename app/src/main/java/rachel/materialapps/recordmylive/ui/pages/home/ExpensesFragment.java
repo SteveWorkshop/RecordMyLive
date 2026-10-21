@@ -140,7 +140,9 @@ public class ExpensesFragment extends Fragment {
         public void onBindViewHolder(@NonNull Holder holder, int position) {
             ExpenseEntity expense = getItem(position);
             ItemExpenseBinding row = holder.binding;
-            row.tvCategory.setText(ExpenseCategory.fromKey(expense.getCategory()).getDisplayName());
+            ExpenseCategory category = ExpenseCategory.fromKey(expense.getCategory());
+            row.ivCategoryIcon.setImageResource(category.getIconResource());
+            row.tvCategory.setText(category.getDisplayName());
             row.tvAmount.setText("¥" + TicketPrice.formatCentsAsYuan(expense.getAmountCents()));
             row.tvDate.setText("消费日期：" + expense.getSpentDate());
             row.tvNote.setText(expense.getNote());

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:background="?attr/colorSurface">
+    <com.google.android.material.appbar.AppBarLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <com.google.android.material.appbar.MaterialToolbar android:id="@+id/toolbar" style="@style/Widget.Material3.Toolbar"
+            android:layout_width="match_parent" android:layout_height="?attr/actionBarSize" app:menu="@menu/menu_save"
+            app:navigationIcon="@drawable/baseline_arrow_back_24px" app:navigationContentDescription="@string/favorite_artists_back" />
+    </com.google.android.material.appbar.AppBarLayout>
+    <androidx.core.widget.NestedScrollView android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+            <com.google.android.material.progressindicator.LinearProgressIndicator android:id="@+id/progress"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:indeterminate="true"
+                android:layout_marginBottom="12dp" android:visibility="gone" />
+            <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp" app:cardElevation="0dp" app:cardBackgroundColor="?attr/colorSurfaceContainerLow" app:strokeColor="?attr/colorOutlineVariant" app:strokeWidth="1dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center_horizontal" android:padding="20dp">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/favorite_artist_image" android:textAppearance="?attr/textAppearanceTitleMedium" />
+                    <ImageView android:id="@+id/artist_image" android:layout_width="144dp" android:layout_height="144dp" android:layout_marginTop="20dp" android:importantForAccessibility="no" />
+                    <com.google.android.material.button.MaterialButton android:id="@+id/choose_image" style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="@string/favorite_artist_choose_image" />
+                    <com.google.android.material.button.MaterialButton android:id="@+id/remove_image" style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/favorite_artist_remove_image" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+                        android:text="@string/favorite_artist_image_hint" android:textAppearance="?attr/textAppearanceBodySmall" android:textColor="?attr/colorOnSurfaceVariant" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp"
+                app:cardCornerRadius="20dp" app:cardElevation="0dp" app:cardBackgroundColor="?attr/colorSurfaceContainerLow" app:strokeColor="?attr/colorOutlineVariant" app:strokeWidth="1dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/favorite_artist_name" android:textAppearance="?attr/textAppearanceTitleMedium" />
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/name_layout"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:hint="@string/favorite_artist_name">
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/artist_input"
+                            style="@style/Widget.Material3.AutoCompleteTextView.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:completionThreshold="1"
+                            android:imeOptions="actionDone"
+                            android:inputType="textCapWords"
+                            android:maxLength="100"
+                            android:singleLine="true" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp"
+                        android:text="@string/favorite_artists_hint" android:textAppearance="?attr/textAppearanceBodyMedium" android:textColor="?attr/colorOnSurfaceVariant" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

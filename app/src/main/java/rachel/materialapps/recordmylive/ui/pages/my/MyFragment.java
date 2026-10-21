@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.card.MaterialCardView;
@@ -20,6 +22,9 @@ import com.google.android.material.color.MaterialColors;
 import rachel.materialapps.recordmylive.R;
 import rachel.materialapps.recordmylive.databinding.FragmentMyBinding;
 import rachel.materialapps.recordmylive.databinding.ItemThemeColorBinding;
+import rachel.materialapps.recordmylive.databinding.ItemArtistPreviewBinding;
+import rachel.materialapps.recordmylive.logic.repository.ProfileRepository;
+import rachel.materialapps.recordmylive.logic.util.ProfileImages;
 import rachel.materialapps.recordmylive.ui.ThemeSettings;
 
 public class MyFragment extends Fragment {
@@ -47,6 +52,25 @@ public class MyFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        binding.profileCard.setOnClickListener(v ->
+                NavHostFragment.findNavController(this).navigate(R.id.profileEditorFragment));
+        binding.favoriteArtists.setOnClickListener(v ->
+                NavHostFragment.findNavController(this).navigate(R.id.favoriteArtistsFragment));
+        FavoriteArtistsViewModel artistsModel = new ViewModelProvider(this).get(FavoriteArtistsViewModel.class);
+        artistsModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
+            int count = artists == null ? 0 : artists.size();
+            binding.favoriteArtistsCount.setText(getString(R.string.favorite_artists_total, count));
+            binding.favoriteArtistsPreview.removeAllViews();
+            binding.favoriteArtistsPreview.setVisibility(count == 0 ? View.GONE : View.VISIBLE);
+            binding.favoriteArtistsEmpty.setVisibility(count == 0 ? View.VISIBLE : View.GONE);
+            for (int i = 0; i < Math.min(3, count); i++) {
+                ItemArtistPreviewBinding row = ItemArtistPreviewBinding.inflate(
+                        getLayoutInflater(), binding.favoriteArtistsPreview, false);
+                row.name.setText(artists.get(i).getName());
+                rachel.materialapps.recordmylive.logic.util.ArtistImages.show(row.artistImage, artists.get(i).getImageFile());
+                binding.favoriteArtistsPreview.addView(row.getRoot());
+            }
+        });
         try {
             String versionName = requireContext().getPackageManager()
                     .getPackageInfo(requireContext().getPackageName(), 0).versionName;
@@ -116,6 +140,15 @@ public class MyFragment extends Fragment {
             });
             colors.addView(card);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ProfileRepository profile = new ProfileRepository(requireContext());
+        String nickname = profile.getNickname();
+        binding.profileNickname.setText(nickname.isEmpty() ? getString(R.string.profile_unset) : nickname);
+        ProfileImages.show(binding.profileAvatar, ProfileImages.file(requireContext(), profile.getAvatarFile()));
     }
 
     @Override

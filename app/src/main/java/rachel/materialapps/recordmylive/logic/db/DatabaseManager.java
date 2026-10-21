@@ -30,6 +30,32 @@ public final class DatabaseManager {
         }
     };
 
+    public static final Migration MIGRATION_7_8 = new Migration(7, 8) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS favorite_artist (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                    + "name TEXT NOT NULL, matchName TEXT NOT NULL, createdAt INTEGER NOT NULL)");
+            db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_favorite_artist_matchName "
+                    + "ON favorite_artist (matchName)");
+        }
+    };
+
+    public static final Migration MIGRATION_8_9 = new Migration(8, 9) {
+        @Override public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("ALTER TABLE favorite_artist ADD COLUMN imageFile TEXT");
+        }
+    };
+
+    public static final Migration MIGRATION_9_10 = new Migration(9, 10) {
+        @Override public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("ALTER TABLE favorite_artist ADD COLUMN sortOrder INTEGER NOT NULL DEFAULT 0");
+            // Preserve the existing newest-first order on upgrade.
+            db.execSQL("UPDATE favorite_artist SET sortOrder = (SELECT COUNT(*) FROM favorite_artist AS other "
+                    + "WHERE other.createdAt > favorite_artist.createdAt OR "
+                    + "(other.createdAt = favorite_artist.createdAt AND other.id > favorite_artist.id))");
+        }
+    };
+
     private DatabaseManager() {
     }
 
@@ -42,7 +68,7 @@ public final class DatabaseManager {
                                     AppDatabase.class,
                                     "record_my_live.db"
                             )
-                            .addMigrations(MIGRATION_5_6, MIGRATION_6_7)
+                            .addMigrations(MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
                             .build();
                 }
             }

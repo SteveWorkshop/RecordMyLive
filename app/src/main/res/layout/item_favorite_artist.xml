@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.Material3.CardView.Elevated" android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp" android:clickable="true" android:focusable="true" app:cardCornerRadius="16dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:padding="16dp">
+        <androidx.appcompat.widget.AppCompatImageView android:id="@+id/drag_handle"
+            android:layout_width="48dp" android:layout_height="48dp"
+            android:padding="12dp" android:contentDescription="@string/favorite_artist_reorder"
+            android:focusable="true" app:srcCompat="@drawable/baseline_drag_handle_24px" />
+        <ImageView android:id="@+id/artist_image" android:layout_width="64dp" android:layout_height="64dp" android:importantForAccessibility="no" />
+        <TextView android:id="@+id/artist_name" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:layout_marginStart="16dp" android:textAppearance="?attr/textAppearanceTitleMedium" android:textColor="?attr/colorOnSurface" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/remove_artist" style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp"
+            android:minHeight="48dp" app:icon="@drawable/baseline_delete_24px" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

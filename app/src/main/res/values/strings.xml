@@ -1,4 +1,15 @@
 <resources>
+    <string name="profile_edit">编辑个人资料</string>
+    <string name="profile_unset">未设置昵称</string>
+    <string name="profile_nickname">昵称</string>
+    <string name="profile_nickname_hint">1–30 个字符，支持中文、英文和表情</string>
+    <string name="profile_nickname_invalid">请输入 1–30 个字符的昵称</string>
+    <string name="profile_choose_avatar">选择头像</string>
+    <string name="profile_change_avatar">更换头像</string>
+    <string name="profile_remove_avatar">移除头像</string>
+    <string name="profile_nearby_hint">此昵称将用于向附近的人展示。强烈建议使用您在社区常见的昵称。您的信息不会被上传到互联网，仅在您主动使用相关功能的情况下展示给附近的人。请勿传播令人不适或容易造成混乱的内容！所造成的可能后果将由您自行承担！</string>
+    <string name="profile_image_error">无法读取图片，请重新选择</string>
+    <string name="profile_save_error">保存失败，请重试</string>
     <string name="app_name">歌笺</string>
     <string name="calendar_reminder_add">添加日历提醒</string>
     <string name="calendar_reminder_update">更新日历提醒</string>
@@ -54,4 +65,43 @@
     <string name="color_indigo">黛蓝 · 沉静蓝灰</string>
     <string name="color_rouge">胭脂 · 柔和绛红</string>
     <string name="color_sandalwood">檀香 · 雅致茶棕</string>
+    <string name="favorite_artists">喜欢的艺人</string>
+    <string name="favorite_artists_edit">编辑喜欢的艺人</string>
+    <string name="favorite_artists_details">详情</string>
+    <string name="favorite_artists_details_description">查看和编辑喜欢的艺人</string>
+    <string name="favorite_artists_total">共 %1$d 位艺人</string>
+    <string name="favorite_artists_preview_empty">还没有喜欢的艺人，点击详情添加。</string>
+    <string name="favorite_artists_preview_more">展示排序前三位，详情中可查看全部</string>
+    <string name="favorite_artist_reorder">拖动调整顺序</string>
+    <string name="favorite_artist_move_up">上移</string>
+    <string name="favorite_artist_move_down">下移</string>
+    <string name="favorite_artists_reorder_hint">拖动左侧手柄调整顺序，前三位展示在“我的”页面。</string>
+    <string name="favorite_artists_back">返回</string>
+    <string name="favorite_artists_hint">建议准确填写最常用名称，同担发现功能将依赖此名称！</string>
+    <string name="favorite_artist_name">艺人名称</string>
+    <string name="favorite_artist_add">添加喜欢的艺人</string>
+    <string name="favorite_artist_count">已喜欢 · %1$d 位</string>
+    <string name="favorite_artists_empty">还没有添加喜欢的艺人，点击右下角按钮开始吧。</string>
+    <string name="favorite_artist_edit">编辑艺人</string>
+    <string name="favorite_artist_image">艺人头像</string>
+    <string name="favorite_artist_choose_image">选择图片</string>
+    <string name="favorite_artist_change_image">更换图片</string>
+    <string name="favorite_artist_remove_image">移除图片</string>
+    <string name="favorite_artist_image_hint">图片仅保存在本地计算机，可随时更换或移除。</string>
+    <string name="favorite_artist_image_error">无法读取图片，请重新选择。</string>
+    <string name="favorite_artist_duplicate">已经添加过这位艺人了</string>
+    <string name="favorite_artist_invalid">请输入 1–100 个字符的艺人名称</string>
+    <string name="favorite_artist_error">操作失败，请重试</string>
+    <string name="favorite_artist_remove">移除</string>
+    <string name="favorite_artist_remove_message">将「%1$s」从喜欢的艺人中移除？演出记录不受影响。</string>
+    <string name="favorite_artist_remove_description">移除喜欢的艺人：%1$s</string>
+    <string-array name="favorite_artist_suggestions">
+        <item>五月天</item>
+        <item>周杰伦</item>
+        <item>陈奕迅</item>
+        <item>孙燕姿</item>
+        <item>林俊杰</item>
+        <item>Taylor Swift</item>
+        <item>Adele</item>
+    </string-array>
 </resources>

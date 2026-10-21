@@ -2,6 +2,7 @@ package rachel.materialapps.recordmylive.ui;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.content.Intent;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 import rachel.materialapps.recordmylive.R;
 import rachel.materialapps.recordmylive.databinding.ActivityMainBinding;
+import rachel.materialapps.recordmylive.logic.nearby.NearbyDiscoveryService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
             else if(id==R.id.timeline_page){
                 navController.navigate(R.id.timeLineFragment);
             }
+            else if(id==R.id.nearby_page){
+                navController.navigate(R.id.nearByFragment);
+            }
             else if(id==R.id.statistic_page){
                 navController.navigate(R.id.statisticsFragment);
             }
@@ -58,5 +63,19 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         });
+        openNearbyFromNotification(getIntent());
+    }
+
+    @Override protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        openNearbyFromNotification(intent);
+    }
+
+    private void openNearbyFromNotification(Intent intent) {
+        if (intent != null && intent.getBooleanExtra(NearbyDiscoveryService.EXTRA_OPEN_NEARBY, false)) {
+            intent.removeExtra(NearbyDiscoveryService.EXTRA_OPEN_NEARBY);
+            binding.navigationRail.setSelectedItemId(R.id.nearby_page);
+        }
     }
 }

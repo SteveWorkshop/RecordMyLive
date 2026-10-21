@@ -15,6 +15,12 @@
     </item>
 
     <item
+        android:id="@+id/nearby_page"
+        android:enabled="true"
+        android:icon="@drawable/baseline_nearby_24px"
+        android:title="同担"/>
+
+    <item
         android:id="@+id/statistic_page"
         android:enabled="true"
         android:icon="@drawable/baseline_statistics_24px"

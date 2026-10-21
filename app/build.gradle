@@ -63,6 +63,7 @@ dependencies {
 
     implementation libs.gson
     implementation libs.glide
+    implementation libs.play.services.nearby
 
 
     //implementation libs.calendar.view

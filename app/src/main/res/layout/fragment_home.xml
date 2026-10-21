@@ -125,7 +125,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="这一天没有演出"/>
+                    android:text="这一天没有演出，\n点击右下角“+”添加演出"/>
 
             </LinearLayout>
 

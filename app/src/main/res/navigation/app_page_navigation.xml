@@ -21,6 +21,21 @@
         android:label="fragment_my"
         tools:layout="@layout/fragment_my" />
     <fragment
+        android:id="@+id/favoriteArtistsFragment"
+        android:name="rachel.materialapps.recordmylive.ui.pages.my.FavoriteArtistsFragment"
+        android:label="@string/favorite_artists"
+        tools:layout="@layout/fragment_favorite_artists" />
+    <fragment android:id="@+id/profileEditorFragment"
+        android:name="rachel.materialapps.recordmylive.ui.pages.my.ProfileEditorFragment"
+        android:label="@string/profile_edit" tools:layout="@layout/fragment_profile_editor" />
+    <fragment
+        android:id="@+id/artistEditorFragment"
+        android:name="rachel.materialapps.recordmylive.ui.pages.my.ArtistEditorFragment"
+        android:label="@string/favorite_artists_edit"
+        tools:layout="@layout/fragment_artist_editor">
+        <argument android:name="artistId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+    <fragment
         android:id="@+id/addConcertFragment"
         android:name="rachel.materialapps.recordmylive.ui.pages.home.AddConcertFragment"
         android:label="AddConcertFragment" />
@@ -47,4 +62,9 @@
         android:name="rachel.materialapps.recordmylive.ui.pages.timeline.TimeLineFragment"
         android:label="fragment_time_line"
         tools:layout="@layout/fragment_time_line" />
+    <fragment
+        android:id="@+id/nearByFragment"
+        android:name="rachel.materialapps.recordmylive.ui.pages.nearby.NearByFragment"
+        android:label="fragment_near_by"
+        tools:layout="@layout/fragment_near_by" />
 </navigation>

@@ -5,6 +5,9 @@
 -->
 <data-extraction-rules>
     <cloud-backup>
+        <exclude domain="file" path="profile_images/" />
+        <exclude domain="sharedpref" path="local_profile.xml" />
+        <exclude domain="file" path="artist_images/" />
         <!-- TODO: Use <include> and <exclude> to control what is backed up.
         <include .../>
         <exclude .../>

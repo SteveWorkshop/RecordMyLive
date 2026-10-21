@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:background="?attr/colorSurface">
+    <com.google.android.material.appbar.AppBarLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <com.google.android.material.appbar.MaterialToolbar android:id="@+id/toolbar" style="@style/Widget.Material3.Toolbar"
+            android:layout_width="match_parent" android:layout_height="?attr/actionBarSize" app:title="@string/profile_edit"
+            app:menu="@menu/menu_save" app:navigationIcon="@drawable/baseline_arrow_back_24px"
+            app:navigationContentDescription="@string/favorite_artists_back" />
+    </com.google.android.material.appbar.AppBarLayout>
+    <androidx.core.widget.NestedScrollView android:layout_width="match_parent" android:layout_height="match_parent"
+        android:fillViewport="true" app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
+            <com.google.android.material.progressindicator.LinearProgressIndicator android:id="@+id/progress"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:indeterminate="true"
+                android:layout_marginBottom="16dp" android:visibility="gone" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center_horizontal">
+                <com.google.android.material.imageview.ShapeableImageView android:id="@+id/profile_avatar"
+                    android:layout_width="96dp" android:layout_height="96dp" android:backgroundTint="?attr/colorSecondaryContainer"
+                    android:background="@drawable/profile_avatar_background" android:importantForAccessibility="no"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.RecordMyLive.Circle" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/choose_avatar" style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"
+                    android:minHeight="48dp" android:text="@string/profile_choose_avatar" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/remove_avatar" style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/profile_remove_avatar" />
+            </LinearLayout>
+            <com.google.android.material.textfield.TextInputLayout android:id="@+id/nickname_layout"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="32dp" android:hint="@string/profile_nickname"
+                app:helperText="@string/profile_nickname_hint">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/nickname_input"
+                    android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textPersonName|textCapWords"
+                    android:imeOptions="actionDone" android:singleLine="true" android:maxLength="60" android:importantForAutofill="no" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp"
+                android:text="@string/profile_nearby_hint" android:textAppearance="?attr/textAppearanceBodyMedium" android:textColor="?attr/colorOnSurfaceVariant" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -3,6 +3,8 @@ package rachel.materialapps.recordmylive.logic.db;
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
+import rachel.materialapps.recordmylive.logic.dao.FavoriteArtistDao;
+import rachel.materialapps.recordmylive.logic.entity.FavoriteArtistEntity;
 import rachel.materialapps.recordmylive.logic.dao.ExpenseDao;
 import rachel.materialapps.recordmylive.logic.entity.ExpenseEntity;
 
@@ -21,9 +23,10 @@ import rachel.materialapps.recordmylive.logic.entity.handler.PurchaseChannelConv
         entities = {
                 ConcertEntity.class,
                 ConcertSongEntity.class,
-                ExpenseEntity.class
+                ExpenseEntity.class,
+                FavoriteArtistEntity.class
         },
-        version = 7,
+        version = 10,
         exportSchema = false
 )
 @TypeConverters({
@@ -40,5 +43,6 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract ConcertSongDao concertSongDao();
     public abstract ExpenseDao expenseDao();
+    public abstract FavoriteArtistDao favoriteArtistDao();
 
 }

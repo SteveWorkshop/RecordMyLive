@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nearby_title">附近的人（Beta）</string>
+    <string name="nearby_alert_switch">发现同担时通知我</string>
+    <string name="nearby_alert_hint">仅在附近发现开启时生效。同一次发现期间避免重复提醒，通知不展示昵称或艺人名字。</string>
+    <string name="nearby_alert_blocked">提醒已开启，但系统通知权限或“同担提醒”通知类别被关闭，请前往通知设置允许。</string>
+    <string name="nearby_alert_settings">通知设置</string>
+    <string name="nearby_alert_channel">同担提醒</string>
+    <string name="nearby_alert_channel_description">附近发现开启期间，有共同喜欢的艺人时提醒</string>
+    <string name="nearby_alert_title">发现同担</string>
+    <string name="nearby_alert_text">附近有人与你喜欢相同的艺人，点击查看。</string>
+    <string name="nearby_start">开启附近发现</string>
+    <string name="nearby_stop">停止附近发现</string>
+    <string name="nearby_visibility_hint">默认关闭。开启后，附近安装了此应用程序的计算机可看到你的昵称，并自动连接交换艺人名摘要以匹配共同喜好。切换页面或窗口失去焦点仍会运行，可在本页或通知中关闭（需允许通知）。</string>
+    <string name="nearby_match_pending">正在匹配共同喜欢的艺人…</string>
+    <string name="nearby_match_failed">暂时无法匹配，请重新开启附近发现</string>
+    <string name="nearby_match_count">有 %1$d 个共同喜欢的艺人 · 点击查看</string>
+    <string name="nearby_match_empty">暂无共同喜欢的艺人</string>
+    <string name="nearby_match_title">与 %1$s 共同喜欢</string>
+    <string name="nearby_match_note">按艺人名字匹配，图片来自本机收藏。</string>
+    <string name="nearby_match_close">关闭</string>
+    <string name="nearby_notification_channel">附近发现</string>
+    <string name="nearby_notification_channel_description">显示附近发现的后台运行状态，并提供停止按钮</string>
+    <string name="nearby_notification_title">附近发现已开启</string>
+    <string name="nearby_notification_text">正在展示昵称并匹配共同喜欢的艺人，点击返回。</string>
+    <string name="nearby_idle">尚未开启附近发现</string>
+    <string name="nearby_starting">正在开启广播与搜索…</string>
+    <string name="nearby_active">正在搜索附近用户，匹配共同喜欢的艺人</string>
+    <string name="nearby_stopping">正在停止附近发现…</string>
+    <string name="nearby_count">附近用户 · %1$d</string>
+    <string name="nearby_empty">开启后，可在这里看到附近用户。</string>
+    <string name="nearby_empty_searching">暂未发现用户，请让对方也开启附近发现，并靠近一些。</string>
+    <string name="nearby_person_hint">对方提供的昵称</string>
+    <string name="nearby_name_required">请先设置昵称，再开启附近发现。</string>
+    <string name="nearby_permission_denied">未获得所需权限。请允许“附近设备”权限；Android 12 还需要精确定位权限才能发现设备。</string>
+    <string name="nearby_services_unavailable">Google Play 服务不可用或需要更新，暂时无法使用附近发现。某些通用系统映像（GSI）或虚拟机可能会存在此问题（如LineageOS），请联系您使用的Android发行版开发者寻求帮助</string>
+    <string name="nearby_bluetooth_off">请先开启蓝牙，再重试附近发现。</string>
+    <string name="nearby_location_off">Android 12 需要开启系统定位服务才能发现附近设备，本功能不读取 GPS 坐标。</string>
+    <string name="nearby_start_failed">未能开启附近发现。请检查蓝牙、Wi-Fi 和 Google Play 服务后重试。</string>
+    <string name="nearby_open_settings">打开系统设置</string>
+</resources>
