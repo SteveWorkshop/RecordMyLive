@@ -16,6 +16,7 @@ android {
         targetSdk 36
         versionCode 1
         versionName "0.0-alpha"
+        resValue "string", "crash_email_address", providers.gradleProperty("crashReportEmail").get()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

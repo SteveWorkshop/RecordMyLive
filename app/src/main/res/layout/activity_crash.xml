@@ -16,7 +16,8 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize">
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginBottom="80dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -98,32 +99,36 @@
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:fabAlignmentMode="end">
+        android:layout_gravity="bottom">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingEnd="80dp">
 
-            <Button android:layout_height="wrap_content" android:layout_width="wrap_content"
+            <Button android:layout_height="wrap_content" android:layout_width="0dp"
+                android:layout_weight="1"
                 android:id="@+id/btnCopy"
                 android:text="复制"/>
 
-            <Button android:layout_height="wrap_content" android:layout_width="wrap_content"
+            <Button android:layout_height="wrap_content" android:layout_width="0dp"
+                android:layout_weight="1"
                 android:id="@+id/btnSave"
                 android:text="保存"/>
 
-            <Button android:layout_height="wrap_content" android:layout_width="wrap_content"
+            <Button android:layout_height="wrap_content" android:layout_width="0dp"
+                android:layout_weight="1"
                 android:id="@+id/btnMail"
-                android:text="发送电子邮件"/>
+                android:text="邮件"/>
 
         </LinearLayout>
 
     </com.google.android.material.bottomappbar.BottomAppBar>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnExit"
-        app:icon="@drawable/baseline_exit_to_app_24px"
+        android:src="@drawable/baseline_exit_to_app_24px"
+        android:contentDescription="@string/crash_exit"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp" android:layout_height="wrap_content" android:layout_width="wrap_content"/>
 

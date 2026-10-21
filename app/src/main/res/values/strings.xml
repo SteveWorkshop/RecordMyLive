@@ -1,4 +1,11 @@
 <resources>
+    <string name="crash_report">崩溃报告</string>
+    <string name="crash_email_subject">歌笺崩溃报告</string>
+    <string name="crash_copied">已复制崩溃报告</string>
+    <string name="crash_saved">崩溃报告已保存</string>
+    <string name="crash_save_failed">保存失败，请重试</string>
+    <string name="crash_no_email_app">未找到邮件应用</string>
+    <string name="crash_exit">退出</string>
     <string name="profile_edit">编辑个人资料</string>
     <string name="profile_unset">未设置昵称</string>
     <string name="profile_nickname">昵称</string>
