@@ -77,6 +77,9 @@ public class AddConcertFragment extends Fragment {
     private LocalDate selectedDate;
 
     private LocalTime selectedTime;
+    private LocalDate selectedTicketSaleDate;
+    private LocalTime selectedTicketSaleTime;
+    private boolean ticketSaleRestored;
 
     private Integer selectedDurationMinutes;
 
@@ -173,6 +176,25 @@ public class AddConcertFragment extends Fragment {
 
         });
 
+        binding.layoutBasicInfo.edtTicketSaleDate.setOnClickListener(v -> showTicketSaleDatePicker());
+        binding.layoutBasicInfo.layoutTicketSaleDate.setEndIconOnClickListener(v -> {
+            selectedTicketSaleDate = null;
+            selectedTicketSaleTime = null;
+            binding.layoutBasicInfo.layoutTicketSaleDate.setError(null);
+            showTicketSaleSelection();
+        });
+        binding.layoutBasicInfo.layoutTicketSaleTime.setEndIconOnClickListener(v -> {
+            selectedTicketSaleTime = null;
+            showTicketSaleSelection();
+        });
+        binding.layoutBasicInfo.edtTicketSaleTime.setOnClickListener(v -> {
+            if (selectedTicketSaleDate == null) {
+                binding.layoutBasicInfo.layoutTicketSaleDate.setError("请先选择开票日期");
+            } else {
+                showTicketSaleTimePicker();
+            }
+        });
+
         binding.layoutBasicInfo.edtDuration.setOnClickListener(v -> showDurationPicker());
 
         binding.layoutLocation.edtCity.setOnClickListener(v ->
@@ -231,6 +253,11 @@ public class AddConcertFragment extends Fragment {
             String type = savedInstanceState.getString("selectedConcertType");
             selectedDate = date == null ? null : LocalDate.parse(date);
             selectedTime = time == null ? null : LocalTime.parse(time);
+            String ticketDate = savedInstanceState.getString("selectedTicketSaleDate");
+            String ticketTime = savedInstanceState.getString("selectedTicketSaleTime");
+            selectedTicketSaleDate = ticketDate == null ? null : LocalDate.parse(ticketDate);
+            selectedTicketSaleTime = ticketTime == null ? null : LocalTime.parse(ticketTime);
+            ticketSaleRestored = true;
             selectedConcertType = type == null ? null : ConcertType.valueOf(type);
             String status = savedInstanceState.getString("selectedConcertStatus");
             selectedConcertStatus = status == null
@@ -264,6 +291,7 @@ public class AddConcertFragment extends Fragment {
         if (selectedTime != null) {
             binding.layoutBasicInfo.edtTime.setText(selectedTime.toString());
         }
+        showTicketSaleSelection();
         if (selectedConcertType != null) {
             binding.layoutBasicInfo.actType.setText(selectedConcertType.getDisplayName(), false);
         }
@@ -315,6 +343,10 @@ public class AddConcertFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putString("selectedDate", selectedDate == null ? null : selectedDate.toString());
         outState.putString("selectedTime", selectedTime == null ? null : selectedTime.toString());
+        outState.putString("selectedTicketSaleDate", selectedTicketSaleDate == null
+                ? null : selectedTicketSaleDate.toString());
+        outState.putString("selectedTicketSaleTime", selectedTicketSaleTime == null
+                ? null : selectedTicketSaleTime.toString());
         outState.putString("selectedConcertType", selectedConcertType == null ? null : selectedConcertType.name());
         outState.putString("selectedConcertStatus", selectedConcertStatus.name());
         if (selectedDurationMinutes != null) {
@@ -380,6 +412,41 @@ public class AddConcertFragment extends Fragment {
         });
 
         picker.show(getParentFragmentManager(), "timePicker");
+    }
+
+    private void showTicketSaleDatePicker() {
+        MaterialDatePicker<Long> picker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("选择开票日期")
+                .setSelection(selectedTicketSaleDate == null ? MaterialDatePicker.todayInUtcMilliseconds()
+                        : selectedTicketSaleDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli())
+                .build();
+        picker.addOnPositiveButtonClickListener(selection -> {
+            if (binding == null) return;
+            selectedTicketSaleDate = Instant.ofEpochMilli(selection).atZone(ZoneOffset.UTC).toLocalDate();
+            binding.layoutBasicInfo.layoutTicketSaleDate.setError(null);
+            showTicketSaleSelection();
+        });
+        picker.show(getParentFragmentManager(), "ticketSaleDatePicker");
+    }
+
+    private void showTicketSaleTimePicker() {
+        MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                .setHour(selectedTicketSaleTime == null ? 10 : selectedTicketSaleTime.getHour())
+                .setMinute(selectedTicketSaleTime == null ? 0 : selectedTicketSaleTime.getMinute())
+                .build();
+        picker.addOnPositiveButtonClickListener(v -> {
+            if (binding == null) return;
+            selectedTicketSaleTime = LocalTime.of(picker.getHour(), picker.getMinute());
+            showTicketSaleSelection();
+        });
+        picker.show(getParentFragmentManager(), "ticketSaleTimePicker");
+    }
+
+    private void showTicketSaleSelection() {
+        binding.layoutBasicInfo.edtTicketSaleDate.setText(selectedTicketSaleDate == null
+                ? "" : selectedTicketSaleDate.toString());
+        binding.layoutBasicInfo.edtTicketSaleTime.setText(selectedTicketSaleTime == null
+                ? "" : selectedTicketSaleTime.toString());
     }
 
 
@@ -477,6 +544,10 @@ public class AddConcertFragment extends Fragment {
         binding.layoutNote.edtNote.setText(originalConcert.getNote());
         selectedDate = originalConcert.getDate();
         selectedTime = originalConcert.getTime();
+        if (!ticketSaleRestored) {
+            selectedTicketSaleDate = originalConcert.getTicketSaleDate();
+            selectedTicketSaleTime = originalConcert.getTicketSaleTime();
+        }
         selectedConcertType = originalConcert.getType();
         selectedConcertStatus = originalConcert.getStatus() == null
                 ? ConcertStatus.PLANNED : originalConcert.getStatus();
@@ -487,6 +558,7 @@ public class AddConcertFragment extends Fragment {
         }
         binding.layoutBasicInfo.edtDate.setText(selectedDate == null ? "" : selectedDate.toString());
         binding.layoutBasicInfo.edtTime.setText(selectedTime == null ? "" : selectedTime.toString());
+        showTicketSaleSelection();
         Integer durationMinutes = originalConcert.getDurationMinutes();
         if (durationMinutes != null && durationMinutes > 0) {
             selectedDurationMinutes = durationMinutes;
@@ -552,6 +624,8 @@ public class AddConcertFragment extends Fragment {
         concert.setType(selectedConcertType);
         concert.setDate(selectedDate);
         concert.setTime(selectedTime);
+        concert.setTicketSaleDate(selectedTicketSaleDate);
+        concert.setTicketSaleTime(selectedTicketSaleTime);
         concert.setDurationMinutes(selectedDurationMinutes);
         concert.setStatus(selectedConcertStatus);
         concert.setCity(binding.layoutLocation.edtCity.getText().toString().trim());

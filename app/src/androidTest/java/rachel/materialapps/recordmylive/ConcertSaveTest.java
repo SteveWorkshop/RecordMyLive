@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -111,6 +112,21 @@ public class ConcertSaveTest {
         assertEquals(1, dao.update(edited));
         assertEquals(1, dao.countByDate(date.plusDays(1)));
         assertEquals(0, dao.countByDate(date));
+    }
+
+    @Test
+    public void ticketSaleDateAndTimePersistWithConcert() throws Exception {
+        ConcertEntity concert = concert(date);
+        concert.setTicketSaleDate(date.minusDays(30));
+        concert.setTicketSaleTime(LocalTime.of(10, 30));
+        long id = dao.insert(concert);
+
+        try (android.database.Cursor cursor = database.getOpenHelper().getReadableDatabase().query(
+                "SELECT ticketSaleDate, ticketSaleTime FROM concert WHERE id = " + id)) {
+            assertTrue(cursor.moveToFirst());
+            assertEquals("2026-09-19", cursor.getString(0));
+            assertEquals("10:30", cursor.getString(1));
+        }
     }
 
     @Test

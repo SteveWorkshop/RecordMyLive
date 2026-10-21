@@ -60,5 +60,26 @@
                 android:textColor="?attr/colorOnSurfaceVariant"
                 tools:text="上海" />
         </LinearLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvRelativeTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:maxWidth="64dp"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+            android:textStyle="bold"
+            tools:text="还有 12 天" />
+
+        <ImageButton
+            android:id="@+id/btnDelete"
+            style="?attr/borderlessButtonStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="删除演出"
+            android:src="@drawable/baseline_delete_24px"
+            app:tint="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

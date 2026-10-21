@@ -62,6 +62,14 @@
 
         <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="分类支出" android:textAppearance="@style/TextAppearance.Material3.TitleMedium" android:textStyle="bold"/>
+                <TextView android:id="@+id/tvExpenseBreakdown" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:lineSpacingExtra="8dp"/>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="仅统计已看的演出，按演出日期归属月份和年份" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="歌手 Top 3" android:textAppearance="@style/TextAppearance.Material3.TitleMedium" android:textStyle="bold"/>
                 <LinearLayout android:id="@+id/artistRankingContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="vertical"/>
             </LinearLayout>

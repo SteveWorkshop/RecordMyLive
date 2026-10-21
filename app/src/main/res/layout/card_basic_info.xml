@@ -113,6 +113,55 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutTicketSaleDate"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="开票日期（选填）"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/baseline_delete_24px"
+                app:endIconContentDescription="清除开票日期">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtTicketSaleDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="false" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Space
+                android:layout_width="12dp"
+                android:layout_height="1dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutTicketSaleTime"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="开票时间（选填）"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/baseline_delete_24px"
+                app:endIconContentDescription="清除开票时间">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtTicketSaleTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="false" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutDuration"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"

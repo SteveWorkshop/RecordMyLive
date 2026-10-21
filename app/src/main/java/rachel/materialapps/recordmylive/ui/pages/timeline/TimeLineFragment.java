@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import java.util.List;
 import rachel.materialapps.recordmylive.R;
 import rachel.materialapps.recordmylive.databinding.FragmentTimeLineBinding;
 import rachel.materialapps.recordmylive.logic.entity.ConcertEntity;
+import rachel.materialapps.recordmylive.ui.components.ConcertDeleteDialog;
 
 public class TimeLineFragment extends Fragment {
 
@@ -28,6 +30,7 @@ public class TimeLineFragment extends Fragment {
     private TimeLineViewModel mViewModel;
 
     private TimeLineAdapter adapter;
+    private AlertDialog deleteDialog;
 
     public static TimeLineFragment newInstance() {
         return new TimeLineFragment();
@@ -49,7 +52,7 @@ public class TimeLineFragment extends Fragment {
     }
 
     private void initRecyclerView() {
-        adapter = new TimeLineAdapter(this::openDetail);
+        adapter = new TimeLineAdapter(this::openDetail, this::confirmDelete);
         binding.rvTimeline.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvTimeline.setAdapter(adapter);
     }
@@ -75,8 +78,18 @@ public class TimeLineFragment extends Fragment {
         NavHostFragment.findNavController(this).navigate(R.id.detailFragment, args);
     }
 
+    private void confirmDelete(ConcertEntity concert) {
+        if (deleteDialog != null && deleteDialog.isShowing()) return;
+        deleteDialog = ConcertDeleteDialog.show(requireContext(), concert,
+                callback -> mViewModel.deleteConcert(concert, callback));
+    }
+
     @Override
     public void onDestroyView() {
+        if (deleteDialog != null) {
+            deleteDialog.dismiss();
+            deleteDialog = null;
+        }
         binding.rvTimeline.setAdapter(null);
         adapter = null;
         binding = null;

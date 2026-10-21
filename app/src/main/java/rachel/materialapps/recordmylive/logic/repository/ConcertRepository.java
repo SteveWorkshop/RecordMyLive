@@ -95,7 +95,21 @@ public class ConcertRepository {
     }
 
     public void deleteConcert(ConcertEntity entity) {
-        executor.execute(() -> concertDao.delete(entity));
+        deleteConcert(entity, success -> {});
+    }
+
+    public void deleteConcert(ConcertEntity entity, Consumer<Boolean> callback) {
+        executor.execute(() -> {
+            boolean deleted;
+            try {
+                deleted = concertDao.delete(entity) == 1;
+            } catch (Exception e) {
+                Log.e(TAG, "删除演出失败", e);
+                deleted = false;
+            }
+            boolean result = deleted;
+            new Handler(Looper.getMainLooper()).post(() -> callback.accept(result));
+        });
     }
 
     public void insertSongs(List<ConcertSongEntity> songs) {

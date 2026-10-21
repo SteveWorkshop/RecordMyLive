@@ -78,6 +78,10 @@ public class ConcertEntity implements Serializable {
      */
     private LocalTime time;
 
+    /** 开票日期和时间均可为空，时间填写时须同时填写日期。 */
+    private LocalDate ticketSaleDate;
+    private LocalTime ticketSaleTime;
+
     /**
      * 演出时长（单位：分钟，允许为空）
      */

@@ -1,6 +1,7 @@
 package rachel.materialapps.recordmylive.ui.pages.timeline;
 
 import android.net.Uri;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -12,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.function.Consumer;
 
 import rachel.materialapps.recordmylive.R;
@@ -25,10 +28,13 @@ public class TimeLineAdapter extends ListAdapter<TimeLineItem, RecyclerView.View
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy年M月d日");
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
     private final Consumer<ConcertEntity> clickListener;
+    private final Consumer<ConcertEntity> deleteListener;
 
-    public TimeLineAdapter(Consumer<ConcertEntity> clickListener) {
+    public TimeLineAdapter(Consumer<ConcertEntity> clickListener,
+                           Consumer<ConcertEntity> deleteListener) {
         super(DIFF_CALLBACK);
         this.clickListener = clickListener;
+        this.deleteListener = deleteListener;
         setStateRestorationPolicy(StateRestorationPolicy.PREVENT_WHEN_EMPTY);
     }
 
@@ -89,7 +95,7 @@ public class TimeLineAdapter extends ListAdapter<TimeLineItem, RecyclerView.View
                     ((TimeLineItem.MonthHeader) item).getTitle());
         } else {
             ((ConcertViewHolder) holder).bind(
-                    ((TimeLineItem.ConcertItem) item).getConcert(), clickListener);
+                    ((TimeLineItem.ConcertItem) item).getConcert(), clickListener, deleteListener);
         }
     }
 
@@ -100,6 +106,7 @@ public class TimeLineAdapter extends ListAdapter<TimeLineItem, RecyclerView.View
             Glide.with(concertHolder.binding.imgCover).clear(concertHolder.binding.imgCover);
             concertHolder.binding.imgCover.setImageDrawable(null);
             concertHolder.binding.getRoot().setOnClickListener(null);
+            concertHolder.binding.btnDelete.setOnClickListener(null);
         }
         super.onViewRecycled(holder);
     }
@@ -121,7 +128,9 @@ public class TimeLineAdapter extends ListAdapter<TimeLineItem, RecyclerView.View
             this.binding = binding;
         }
 
-        void bind(ConcertEntity concert, Consumer<ConcertEntity> clickListener) {
+        void bind(ConcertEntity concert, Consumer<ConcertEntity> clickListener,
+                  Consumer<ConcertEntity> deleteListener) {
+            binding.btnDelete.setOnClickListener(v -> deleteListener.accept(concert));
             binding.tvName.setText(concert.getName());
             String time = concert.getTime() == null
                     ? binding.getRoot().getContext().getString(R.string.timeline_time_pending)
@@ -129,6 +138,23 @@ public class TimeLineAdapter extends ListAdapter<TimeLineItem, RecyclerView.View
             binding.tvDateTime.setText(binding.getRoot().getContext().getString(
                     R.string.timeline_date_time, concert.getDate().format(DATE_FORMAT), time));
             binding.tvCity.setText(concert.getCity());
+
+            LocalDate concertDate = concert.getDate();
+            long days = ChronoUnit.DAYS.between(LocalDate.now(), concertDate);
+            if (days > 0) {
+                binding.tvRelativeTime.setText(
+                        binding.getRoot().getContext().getString(R.string.timeline_days_left, days));
+                binding.tvRelativeTime.setTextColor(
+                        resolveThemeColor(binding.tvRelativeTime, com.google.android.material.R.attr.colorPrimary));
+            } else if (days == 0) {
+                binding.tvRelativeTime.setText(R.string.timeline_today);
+                binding.tvRelativeTime.setTextColor(
+                        resolveThemeColor(binding.tvRelativeTime, com.google.android.material.R.attr.colorPrimary));
+            } else {
+                binding.tvRelativeTime.setText(R.string.timeline_ended);
+                binding.tvRelativeTime.setTextColor(
+                        resolveThemeColor(binding.tvRelativeTime, com.google.android.material.R.attr.colorOnSurfaceVariant));
+            }
 
             String cover = concert.getCoverPath();
             // Glide 按 ImageView 的实际尺寸异步解码并缓存，绑定新条目时替换旧请求。
@@ -145,6 +171,15 @@ public class TimeLineAdapter extends ListAdapter<TimeLineItem, RecyclerView.View
                     clickListener.accept(concert);
                 }
             });
+        }
+
+        private int resolveThemeColor(android.widget.TextView view, int attribute) {
+            TypedValue value = new TypedValue();
+            if (view.getContext().getTheme().resolveAttribute(attribute, value, true)) {
+                return value.resourceId != 0
+                        ? view.getContext().getColor(value.resourceId) : value.data;
+            }
+            return view.getCurrentTextColor();
         }
     }
 }

@@ -22,6 +22,9 @@ import rachel.materialapps.recordmylive.logic.constants.ConcertStatus;
 import rachel.materialapps.recordmylive.logic.entity.ConcertEntity;
 import rachel.materialapps.recordmylive.logic.repository.ConcertRepository;
 import rachel.materialapps.recordmylive.logic.util.ArtistNameNormalizer;
+import rachel.materialapps.recordmylive.logic.entity.ExpenseEntity;
+import rachel.materialapps.recordmylive.logic.repository.ExpenseRepository;
+import rachel.materialapps.recordmylive.logic.util.ExpenseTotals;
 
 public class StatisticsViewModel extends AndroidViewModel {
 
@@ -42,17 +45,19 @@ public class StatisticsViewModel extends AndroidViewModel {
         public final int cityCount;
         public final long totalDurationMinutes;
         public final long totalCostCents;
+        public final ExpenseTotals expenses;
         public final List<RankItem> topArtists;
         public final List<RankItem> topCities;
         public final List<RankItem> topTypes;
 
-        Summary(int concertCount, int cityCount, long totalDurationMinutes, long totalCostCents,
+        Summary(int concertCount, int cityCount, long totalDurationMinutes, ExpenseTotals expenses,
                 List<RankItem> topArtists, List<RankItem> topCities,
                 List<RankItem> topTypes) {
             this.concertCount = concertCount;
             this.cityCount = cityCount;
             this.totalDurationMinutes = totalDurationMinutes;
-            this.totalCostCents = totalCostCents;
+            this.expenses = expenses;
+            this.totalCostCents = expenses.totalCents;
             this.topArtists = topArtists;
             this.topCities = topCities;
             this.topTypes = topTypes;
@@ -63,6 +68,7 @@ public class StatisticsViewModel extends AndroidViewModel {
     private final MutableLiveData<YearMonth> anchor = new MutableLiveData<>(YearMonth.now());
     private final MediatorLiveData<Summary> summary = new MediatorLiveData<>();
     private List<ConcertEntity> concerts = Collections.emptyList();
+    private List<ExpenseEntity> expenses = Collections.emptyList();
 
     public StatisticsViewModel(@NonNull Application application) {
         super(application);
@@ -72,6 +78,10 @@ public class StatisticsViewModel extends AndroidViewModel {
             recalculate();
         });
         summary.addSource(period, ignored -> recalculate());
+        summary.addSource(new ExpenseRepository(application).getAll(), items -> {
+            expenses = items == null ? Collections.emptyList() : items;
+            recalculate();
+        });
         summary.addSource(anchor, ignored -> recalculate());
     }
 
@@ -100,7 +110,7 @@ public class StatisticsViewModel extends AndroidViewModel {
 
         int count = 0;
         long duration = 0;
-        long cost = 0;
+        List<ConcertEntity> selectedConcerts = new ArrayList<>();
         Map<String, Integer> artists = new HashMap<>();
         Map<String, String> artistDisplayNames = new HashMap<>();
         Map<String, Integer> cities = new HashMap<>();
@@ -110,7 +120,7 @@ public class StatisticsViewModel extends AndroidViewModel {
             if (concert.getStatus() != ConcertStatus.ATTENDED
                     || !isInPeriod(concert, selected, selectedAnchor)) continue;
             count++;
-            cost += concert.getPaidPriceCents();
+            selectedConcerts.add(concert);
             if (concert.getDurationMinutes() != null && concert.getDurationMinutes() > 0) {
                 duration += concert.getDurationMinutes();
             }
@@ -133,7 +143,8 @@ public class StatisticsViewModel extends AndroidViewModel {
             }
             for (String artist : uniqueArtists) artists.merge(artist, 1, Integer::sum);
         }
-        summary.setValue(new Summary(count, cities.size(), duration, cost,
+        summary.setValue(new Summary(count, cities.size(), duration,
+                ExpenseTotals.calculate(selectedConcerts, expenses),
                 topThree(artists, artistDisplayNames), topThree(cities, null),
                 topThree(types, null)));
     }

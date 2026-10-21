@@ -11,22 +11,28 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import rachel.materialapps.recordmylive.logic.entity.ConcertEntity;
 import rachel.materialapps.recordmylive.logic.repository.ConcertRepository;
 
 public class TimeLineViewModel extends AndroidViewModel {
+    private final ConcertRepository repository;
     private final LiveData<List<TimeLineItem>> timelineItems;
 
     public TimeLineViewModel(@NonNull Application application) {
         super(application);
-        ConcertRepository repository = new ConcertRepository(application);
+        repository = new ConcertRepository(application);
         timelineItems = Transformations.map(
                 repository.getAllConcerts(), TimeLineViewModel::buildTimelineItems);
     }
 
     public LiveData<List<TimeLineItem>> getTimelineItems() {
         return timelineItems;
+    }
+
+    public void deleteConcert(ConcertEntity concert, Consumer<Boolean> callback) {
+        repository.deleteConcert(concert, callback);
     }
 
     /** 数据库已按日期、时间倒序排列；保留顺序，并在每个月首条演出前插入标题。 */

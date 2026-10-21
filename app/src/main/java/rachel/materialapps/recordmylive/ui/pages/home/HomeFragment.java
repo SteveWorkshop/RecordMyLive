@@ -15,9 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import androidx.appcompat.app.AlertDialog;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -35,6 +33,7 @@ import rachel.materialapps.recordmylive.databinding.FragmentHomeBinding;
 import rachel.materialapps.recordmylive.logic.entity.ConcertEntity;
 import rachel.materialapps.recordmylive.ui.components.CalendarDayBinder;
 import rachel.materialapps.recordmylive.ui.components.ConcertPreviewAdapter;
+import rachel.materialapps.recordmylive.ui.components.ConcertDeleteDialog;
 
 public class HomeFragment extends Fragment {
 
@@ -54,6 +53,7 @@ public class HomeFragment extends Fragment {
     private CalendarDayBinder binder;
 
     private ConcertPreviewAdapter adapter;
+    private AlertDialog deleteDialog;
 
     private LocalDate selectedDate = LocalDate.now();
 
@@ -107,7 +107,13 @@ public class HomeFragment extends Fragment {
             } else {
                 LocalDate nextDate = concerts.get(0).getDate();
                 long days = ChronoUnit.DAYS.between(today, nextDate);
-                countdownText = "距离下次演出还有 " + days + " 天！🎉";
+                if(days==0){
+                    countdownText = "今天就可以见面啦，祝你玩得愉快！🎉";
+                }
+                else{
+                    countdownText = "距离下次见面还有 " + days + " 天！🎉";
+                }
+
             }
             binding.tvNextConcert.setText(countdownText);
         });
@@ -152,6 +158,10 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        if (deleteDialog != null) {
+            deleteDialog.dismiss();
+            deleteDialog = null;
+        }
         super.onDestroyView();
         binding=null;
     }
@@ -166,18 +176,7 @@ public class HomeFragment extends Fragment {
         adapter = new ConcertPreviewAdapter(
                 this::openDetail,
                 this::openEdit,
-                concert -> {
-                    new MaterialAlertDialogBuilder(requireContext())
-                            .setTitle("删除演出")
-                            .setMessage("确定删除 \"" + concert.getName() + "\" 吗？")
-                            .setPositiveButton("删除", (dialog, which) -> {
-                                //todo：真删
-                                Toast.makeText(getContext(), "模拟删除", Toast.LENGTH_SHORT).show();
-                                //mViewModel.deleteConcert(concert);
-                            })
-                            .setNegativeButton("取消", null)
-                            .show();
-                }
+                this::confirmDelete
         );
         binding.rvConcert.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvConcert.setAdapter(adapter);
@@ -187,5 +186,11 @@ public class HomeFragment extends Fragment {
         Bundle args = new Bundle();
         args.putLong("concertId", concert.getId());
         navController.navigate(R.id.addConcertFragment, args);
+    }
+
+    private void confirmDelete(ConcertEntity concert) {
+        if (deleteDialog != null && deleteDialog.isShowing()) return;
+        deleteDialog = ConcertDeleteDialog.show(requireContext(), concert,
+                callback -> mViewModel.deleteConcert(concert, callback));
     }
 }

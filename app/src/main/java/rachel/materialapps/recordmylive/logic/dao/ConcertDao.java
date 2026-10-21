@@ -35,7 +35,7 @@ public interface ConcertDao {
     int updateValidated(ConcertEntity concert);
 
     @Delete
-    void delete(ConcertEntity concert);
+    int delete(ConcertEntity concert);
 
     @Query("SELECT * FROM concert ORDER BY date DESC,time DESC")
     LiveData<List<ConcertEntity>> getAll();

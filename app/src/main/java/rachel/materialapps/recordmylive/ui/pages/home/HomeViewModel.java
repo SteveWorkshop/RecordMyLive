@@ -14,6 +14,7 @@ import java.time.YearMonth;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import rachel.materialapps.recordmylive.logic.entity.ConcertEntity;
 import rachel.materialapps.recordmylive.logic.repository.ConcertRepository;
@@ -91,5 +92,9 @@ public class HomeViewModel extends AndroidViewModel {
 
     public void setMonth(YearMonth ym) {
         currentMonth.setValue(ym);
+    }
+
+    public void deleteConcert(ConcertEntity concert, Consumer<Boolean> callback) {
+        repository.deleteConcert(concert, callback);
     }
 }

@@ -107,6 +107,30 @@
                         android:text=""
                         android:visibility="gone"/>
 
+                    <TextView
+                        android:id="@+id/tvTicketSale"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnTicketSaleReminder"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/ticket_sale_reminder_add"
+                        app:icon="@android:drawable/ic_menu_my_calendar" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCalendarReminder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/calendar_reminder_add"
+                        app:icon="@android:drawable/ic_menu_my_calendar" />
+
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
@@ -201,6 +225,49 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardExpenses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="费用明细"
+                            android:textColor="?attr/colorPrimary"
+                            android:textStyle="bold"/>
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnViewExpenses"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="查看明细 ›"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvExpenseSummary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

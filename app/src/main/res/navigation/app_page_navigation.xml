@@ -31,6 +31,16 @@
         <action
             android:id="@+id/action_detail_to_edit"
             app:destination="@id/addConcertFragment" />
+        <action
+            android:id="@+id/action_detail_to_expenses"
+            app:destination="@id/expensesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/expensesFragment"
+        android:name="rachel.materialapps.recordmylive.ui.pages.home.ExpensesFragment"
+        android:label="费用明细"
+        tools:layout="@layout/fragment_expenses">
+        <argument android:name="concertId" app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/timeLineFragment"

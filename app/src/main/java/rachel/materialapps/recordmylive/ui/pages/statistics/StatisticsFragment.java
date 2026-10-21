@@ -20,6 +20,8 @@ import java.util.Locale;
 
 import rachel.materialapps.recordmylive.R;
 import rachel.materialapps.recordmylive.databinding.FragmentStatisticsBinding;
+import rachel.materialapps.recordmylive.logic.constants.ExpenseCategory;
+import rachel.materialapps.recordmylive.logic.util.TicketPrice;
 
 public class StatisticsFragment extends Fragment {
 
@@ -73,6 +75,13 @@ public class StatisticsFragment extends Fragment {
         binding.tvTotalDuration.setText(formatDuration(summary.totalDurationMinutes));
         binding.tvTotalCost.setText(String.format(
                 Locale.CHINA, "¥%,.2f", summary.totalCostCents / 100.0));
+        StringBuilder costs = new StringBuilder("门票（实付）  ¥")
+                .append(TicketPrice.formatCentsAsYuan(summary.expenses.ticketCents));
+        for (ExpenseCategory category : ExpenseCategory.values()) {
+            costs.append('\n').append(category.getDisplayName()).append("  ¥")
+                    .append(TicketPrice.formatCentsAsYuan(summary.expenses.categories.get(category)));
+        }
+        binding.tvExpenseBreakdown.setText(costs.toString());
         renderRanking(binding.artistRankingContainer, summary.topArtists);
         renderRanking(binding.cityRankingContainer, summary.topCities);
         renderRanking(binding.typeRankingContainer, summary.topTypes);
