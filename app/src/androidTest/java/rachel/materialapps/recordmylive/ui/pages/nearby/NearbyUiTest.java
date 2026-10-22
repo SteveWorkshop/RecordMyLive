@@ -16,11 +16,22 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static org.junit.Assume.assumeTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class NearbyUiTest {
+    @Test public void nearbyHelpUsesAnOnDemandTooltipInsteadOfTakingPageSpace() {
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+            onView(withId(R.id.nearby_page)).perform(click());
+            onView(withId(R.id.nearby_help)).check(matches(isDisplayed())).perform(click());
+            onView(withText(R.string.nearby_visibility_hint)).check(matches(isDisplayed()));
+            pressBack();
+            onView(withText(R.string.nearby_visibility_hint)).check(doesNotExist());
+        }
+    }
+
     @Test public void discoveryIsOptInAndProfileEditorReturnsToIdle() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         SharedPreferences prefs = context.getSharedPreferences("local_profile", Context.MODE_PRIVATE);

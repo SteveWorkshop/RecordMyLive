@@ -32,10 +32,7 @@ public class NearbyDiscoveryService extends Service {
     private boolean observing;
     private LiveData<List<FavoriteArtistEntity>> favoriteArtists;
     private final Observer<List<FavoriteArtistEntity>> artistObserver = value -> {
-        List<NearbySession.Artist> artists = new ArrayList<>();
-        if (value != null) for (FavoriteArtistEntity artist : value)
-            artists.add(new NearbySession.Artist(artist.getName(), artist.getImageFile()));
-        discovery.setArtists(artists);
+        discovery.preloadFavorites(value);
     };
     private final Observer<NearbySession.Snapshot> observer = state -> {
         matchNotifications.update(state);

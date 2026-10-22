@@ -89,10 +89,6 @@ public final class NearbySession {
 
     public void start(String nickname) {
         if (wanted || pending) return;
-        // Every new session waits for a fresh database result, avoiding stale/deleted preferences.
-        artists = Collections.emptyList();
-        artistsLoaded = false;
-        transport.clearArtists();
         wanted = pending = true;
         int token = ++generation;
         peers.clear();
@@ -138,9 +134,6 @@ public final class NearbySession {
     public void stop() {
         wanted = false;
         transport.stop();
-        transport.clearArtists();
-        artists = Collections.emptyList();
-        artistsLoaded = false;
         peers.clear();
         issue = Issue.NONE;
         stage = pending ? Stage.STOPPING : Stage.IDLE;

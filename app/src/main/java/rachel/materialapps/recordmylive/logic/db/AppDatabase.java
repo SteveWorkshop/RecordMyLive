@@ -26,7 +26,7 @@ import rachel.materialapps.recordmylive.logic.entity.handler.PurchaseChannelConv
                 ExpenseEntity.class,
                 FavoriteArtistEntity.class
         },
-        version = 10,
+        version = 11,
         exportSchema = false
 )
 @TypeConverters({

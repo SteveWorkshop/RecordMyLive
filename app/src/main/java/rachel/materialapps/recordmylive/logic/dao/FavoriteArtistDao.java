@@ -25,6 +25,23 @@ public interface FavoriteArtistDao {
     @Query("SELECT * FROM favorite_artist ORDER BY sortOrder ASC, createdAt DESC, id DESC")
     List<FavoriteArtistEntity> getAllSync();
 
+    @Query("SELECT COUNT(*) FROM favorite_artist WHERE nearbyMatchSelected = 1")
+    int getNearbyMatchSelectedCount();
+
+    @Query("SELECT nearbyMatchSelected FROM favorite_artist WHERE id = :id")
+    boolean isNearbyMatchSelected(long id);
+
+    @Query("UPDATE favorite_artist SET nearbyMatchSelected = :selected WHERE id = :id")
+    int updateNearbyMatchSelected(long id, boolean selected);
+
+    @androidx.room.Transaction
+    default boolean selectForNearbyMatch(long id, boolean selected, int max) {
+        boolean wasSelected = isNearbyMatchSelected(id);
+        if (wasSelected == selected) return true;
+        if (selected && getNearbyMatchSelectedCount() >= max) return false;
+        return updateNearbyMatchSelected(id, selected) == 1;
+    }
+
     @Query("SELECT COALESCE(MAX(sortOrder), -1) + 1 FROM favorite_artist")
     long nextSortOrder();
 

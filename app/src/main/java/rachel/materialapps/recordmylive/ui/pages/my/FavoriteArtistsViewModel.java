@@ -44,6 +44,12 @@ public class FavoriteArtistsViewModel extends AndroidViewModel {
         repository.delete(id, this::finish);
     }
 
+    public void selectForNearbyMatch(long id, boolean selected) {
+        if (Boolean.TRUE.equals(busy.getValue())) return;
+        busy.setValue(true);
+        repository.selectForNearbyMatch(id, selected, this::finish);
+    }
+
     private void finish(FavoriteArtistRepository.Result value) {
         busy.setValue(false);
         result.setValue(value);

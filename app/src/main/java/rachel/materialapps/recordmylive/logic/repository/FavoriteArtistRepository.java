@@ -19,7 +19,8 @@ import rachel.materialapps.recordmylive.logic.util.ArtistNameNormalizer;
 import rachel.materialapps.recordmylive.logic.util.ArtistImages;
 
 public class FavoriteArtistRepository {
-    public enum Result { ADDED, UPDATED, DUPLICATE, INVALID, DELETED, REORDERED, ERROR }
+    public enum Result { ADDED, UPDATED, DUPLICATE, INVALID, DELETED, REORDERED, NEARBY_SELECTION_LIMIT, ERROR }
+    public static final int MAX_NEARBY_MATCH_ARTISTS = 20;
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final FavoriteArtistDao dao;
@@ -29,6 +30,16 @@ public class FavoriteArtistRepository {
         dao = DatabaseManager.getInstance(context).favoriteArtistDao();
     }
     public LiveData<List<FavoriteArtistEntity>> getAll() { return dao.getAll(); }
+    public void selectForNearbyMatch(long id, boolean selected, Consumer<Result> callback) {
+        EXECUTOR.execute(() -> {
+            Result result;
+            try { result = dao.selectForNearbyMatch(id, selected, MAX_NEARBY_MATCH_ARTISTS)
+                    ? Result.UPDATED : Result.NEARBY_SELECTION_LIMIT; }
+            catch (RuntimeException e) { result = Result.ERROR; }
+            Result value = result;
+            mainHandler.post(() -> callback.accept(value));
+        });
+    }
     public void load(long id, Consumer<FavoriteArtistEntity> callback) {
         EXECUTOR.execute(() -> {
             FavoriteArtistEntity artist;

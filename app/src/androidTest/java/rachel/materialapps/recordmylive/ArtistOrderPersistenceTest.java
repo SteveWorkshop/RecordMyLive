@@ -40,7 +40,7 @@ public class ArtistOrderPersistenceTest {
                 old.setVersion(9);
             }
             AppDatabase db = Room.databaseBuilder(context, AppDatabase.class, name)
-                    .addMigrations(DatabaseManager.MIGRATION_9_10).build();
+                    .addMigrations(DatabaseManager.MIGRATION_9_10, DatabaseManager.MIGRATION_10_11).build();
             try {
                 FavoriteArtistDao dao = db.favoriteArtistDao();
                 assertOrder(dao, third, second, first);

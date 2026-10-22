@@ -1,6 +1,7 @@
 package rachel.materialapps.recordmylive;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -46,6 +47,29 @@ public class FavoriteArtistPersistenceTest {
     }
 
     @Test
+    public void nearbyMatchSelectionIsOptInAndLimitedToTwenty() {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        AppDatabase db = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
+        try {
+            java.util.List<Long> ids = new java.util.ArrayList<>();
+            for (int i = 0; i < 21; i++) {
+                FavoriteArtistEntity artist = artist("nearby selection " + i);
+                ids.add(db.favoriteArtistDao().insert(artist));
+                assertFalse(artist.isNearbyMatchSelected());
+            }
+            for (int i = 0; i < 20; i++)
+                assertTrue(db.favoriteArtistDao().selectForNearbyMatch(ids.get(i), true, 20));
+            assertFalse(db.favoriteArtistDao().selectForNearbyMatch(ids.get(20), true, 20));
+            assertEquals(20, db.favoriteArtistDao().getNearbyMatchSelectedCount());
+            assertTrue(db.favoriteArtistDao().selectForNearbyMatch(ids.get(0), false, 20));
+            assertTrue(db.favoriteArtistDao().selectForNearbyMatch(ids.get(20), true, 20));
+            assertEquals(20, db.favoriteArtistDao().getNearbyMatchSelectedCount());
+        } finally {
+            db.close();
+        }
+    }
+
+    @Test
     public void migrationFromSevenPreservesExistingTablesAndFavoritesSurviveReopening() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         String name = "favorite-artist-migration-test.db";
@@ -74,7 +98,7 @@ public class FavoriteArtistPersistenceTest {
             }
             AppDatabase db = Room.databaseBuilder(context, AppDatabase.class, name)
                     .addMigrations(DatabaseManager.MIGRATION_7_8, DatabaseManager.MIGRATION_8_9,
-                            DatabaseManager.MIGRATION_9_10).build();
+                            DatabaseManager.MIGRATION_9_10, DatabaseManager.MIGRATION_10_11).build();
             try {
                 assertEquals(1, db.concertDao().countByDate(date));
                 assertEquals(12345L, db.expenseDao().getForConcertSync(1).get(0).getAmountCents());
@@ -84,7 +108,9 @@ public class FavoriteArtistPersistenceTest {
                     assertTrue(cursor.getString(0).contains("司 南"));
                 }
                 assertTrue(db.favoriteArtistDao().getAllSync().isEmpty());
-                assertTrue(db.favoriteArtistDao().insert(artist(" Taylor   Swift ")) > 0);
+                FavoriteArtistEntity migrated = artist(" Taylor   Swift ");
+                assertTrue(db.favoriteArtistDao().insert(migrated) > 0);
+                assertFalse(db.favoriteArtistDao().getAllSync().get(0).isNearbyMatchSelected());
             } finally {
                 db.close();
             }
@@ -124,7 +150,8 @@ public class FavoriteArtistPersistenceTest {
                 old.setVersion(8);
             }
             AppDatabase migrated = Room.databaseBuilder(context, AppDatabase.class, name)
-                    .addMigrations(DatabaseManager.MIGRATION_8_9, DatabaseManager.MIGRATION_9_10).build();
+                    .addMigrations(DatabaseManager.MIGRATION_8_9, DatabaseManager.MIGRATION_9_10,
+                            DatabaseManager.MIGRATION_10_11).build();
             try {
                 FavoriteArtistEntity favorite = migrated.favoriteArtistDao().getById(id);
                 assertEquals("Taylor Swift", favorite.getName());

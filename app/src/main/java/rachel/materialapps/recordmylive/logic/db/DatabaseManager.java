@@ -56,6 +56,12 @@ public final class DatabaseManager {
         }
     };
 
+    public static final Migration MIGRATION_10_11 = new Migration(10, 11) {
+        @Override public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("ALTER TABLE favorite_artist ADD COLUMN nearbyMatchSelected INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
     private DatabaseManager() {
     }
 
@@ -68,7 +74,8 @@ public final class DatabaseManager {
                                     AppDatabase.class,
                                     "record_my_live.db"
                             )
-                            .addMigrations(MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
+                            .addMigrations(MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9,
+                                    MIGRATION_9_10, MIGRATION_10_11)
                             .build();
                 }
             }

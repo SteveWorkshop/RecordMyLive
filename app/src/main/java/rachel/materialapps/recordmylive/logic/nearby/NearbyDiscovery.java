@@ -6,6 +6,9 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import java.util.function.Consumer;
+import java.util.List;
+import java.util.ArrayList;
+import rachel.materialapps.recordmylive.logic.entity.FavoriteArtistEntity;
 
 /** Process-local state shared by the service and any number of page instances. Never persisted. */
 public final class NearbyDiscovery {
@@ -49,6 +52,12 @@ public final class NearbyDiscovery {
     /** Recheck observers after returning from notification permission/channel settings. */
     public void refreshState() { state.setValue(state.getValue()); }
     public void setArtists(java.util.List<NearbySession.Artist> artists) { session.setArtists(artists); }
+    public void preloadFavorites(List<FavoriteArtistEntity> favorites) {
+        List<NearbySession.Artist> selected = new ArrayList<>();
+        if (favorites != null) for (FavoriteArtistEntity artist : favorites)
+            if (artist.isNearbyMatchSelected()) selected.add(new NearbySession.Artist(artist.getName(), artist.getImageFile()));
+        session.setArtists(selected);
+    }
     public String getBroadcastNickname() { return broadcastNickname; }
     public boolean isRunning() {
         NearbySession.Stage stage = state.getValue().stage;

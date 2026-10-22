@@ -23,6 +23,7 @@ import rachel.materialapps.recordmylive.R;
 import rachel.materialapps.recordmylive.databinding.FragmentFavoriteArtistsBinding;
 import rachel.materialapps.recordmylive.databinding.ItemFavoriteArtistBinding;
 import rachel.materialapps.recordmylive.logic.entity.FavoriteArtistEntity;
+import rachel.materialapps.recordmylive.logic.repository.FavoriteArtistRepository;
 
 public class FavoriteArtistsFragment extends Fragment {
     private FragmentFavoriteArtistsBinding binding;
@@ -45,6 +46,7 @@ public class FavoriteArtistsFragment extends Fragment {
         binding.toolbar.setNavigationOnClickListener(v -> NavHostFragment.findNavController(this).navigateUp());
         binding.addArtist.setOnClickListener(v -> openEditor(0));
         ArtistAdapter adapter = new ArtistAdapter(this::confirmRemove, artist -> openEditor(artist.getId()));
+        adapter.toggleNearby = (artist, selected) -> viewModel.selectForNearbyMatch(artist.getId(), selected);
         adapter.startDrag = holder -> {
             if (!Boolean.TRUE.equals(viewModel.getBusy().getValue())) touchHelper.startDrag(holder);
         };
@@ -82,9 +84,13 @@ public class FavoriteArtistsFragment extends Fragment {
         touchHelper.attachToRecyclerView(binding.artistList);
         viewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
             List<FavoriteArtistEntity> items = artists == null ? Collections.emptyList() : artists;
-            if (!dragging && !Boolean.TRUE.equals(viewModel.getBusy().getValue())) adapter.submitList(items);
             binding.empty.setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
             binding.artistCount.setText(getString(R.string.favorite_artist_count, items.size()));
+            int nearbySelected = 0;
+            for (FavoriteArtistEntity artist : items) if (artist.isNearbyMatchSelected()) nearbySelected++;
+            binding.nearbySelectionCount.setText(getString(R.string.favorite_artists_nearby_count, nearbySelected));
+            adapter.nearbySelectionCount = nearbySelected;
+            if (!dragging && !Boolean.TRUE.equals(viewModel.getBusy().getValue())) adapter.submitList(items);
         });
         viewModel.getBusy().observe(getViewLifecycleOwner(), busy -> {
             binding.addArtist.setEnabled(!Boolean.TRUE.equals(busy));
@@ -97,6 +103,9 @@ public class FavoriteArtistsFragment extends Fragment {
             switch (result) {
                 case ERROR:
                     Toast.makeText(requireContext(), R.string.favorite_artist_error, Toast.LENGTH_SHORT).show();
+                    break;
+                case NEARBY_SELECTION_LIMIT:
+                    Toast.makeText(requireContext(), R.string.favorite_artists_nearby_limit, Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;
@@ -147,6 +156,8 @@ public class FavoriteArtistsFragment extends Fragment {
         private Consumer<Holder> startDrag;
         private Runnable saveOrder;
         private boolean enabled = true;
+        private int nearbySelectionCount;
+        private Consumer2 toggleNearby;
         private final Consumer<FavoriteArtistEntity> remove;
         private final Consumer<FavoriteArtistEntity> edit;
 
@@ -202,6 +213,16 @@ public class FavoriteArtistsFragment extends Fragment {
                     holder.itemView.getContext().getString(R.string.favorite_artist_move_down),
                     (v, args) -> accessibleMove(holder, 1));
             holder.binding.artistName.setText(artist.getName());
+            holder.binding.nearbyMatchSelected.setContentDescription(holder.itemView.getContext().getString(
+                    R.string.favorite_artist_nearby_selection, artist.getName()));
+            holder.binding.nearbyMatchSelected.setOnCheckedChangeListener(null);
+            holder.binding.nearbyMatchSelected.setTag(artist.getId());
+            holder.binding.nearbyMatchSelected.setChecked(artist.isNearbyMatchSelected());
+            holder.binding.nearbyMatchSelected.setEnabled(enabled &&
+                    (artist.isNearbyMatchSelected() || nearbySelectionCount < FavoriteArtistRepository.MAX_NEARBY_MATCH_ARTISTS));
+            holder.binding.nearbyMatchSelected.setOnCheckedChangeListener((button, selected) -> {
+                if (enabled && toggleNearby != null) toggleNearby.accept(artist, selected);
+            });
             rachel.materialapps.recordmylive.logic.util.ArtistImages.show(holder.binding.artistImage, artist.getImageFile());
             holder.itemView.setOnClickListener(v -> edit.accept(artist));
             holder.binding.removeArtist.setContentDescription(holder.itemView.getContext()
@@ -216,5 +237,9 @@ public class FavoriteArtistsFragment extends Fragment {
                 this.binding = binding;
             }
         }
+    }
+
+    @FunctionalInterface private interface Consumer2 {
+        void accept(FavoriteArtistEntity artist, boolean selected);
     }
 }

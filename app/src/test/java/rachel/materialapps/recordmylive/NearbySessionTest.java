@@ -40,7 +40,7 @@ public class NearbySessionTest {
         transport.finish(true);
         transport.events().found("a", "附近用户");
         transport.events().artists("a", java.util.Collections.emptySet());
-        assertFalse(state.peers.get(0).matched); // fresh session must await fresh local preferences
+        assertTrue(state.peers.get(0).matched); // cached selection is ready immediately for the next session
     }
     private final FakeTransport transport = new FakeTransport();
     private NearbySession.Snapshot state;

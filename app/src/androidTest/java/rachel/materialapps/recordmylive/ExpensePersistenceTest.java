@@ -64,7 +64,8 @@ public class ExpensePersistenceTest {
             }
             AppDatabase db = Room.databaseBuilder(context, AppDatabase.class, name)
                     .addMigrations(DatabaseManager.MIGRATION_6_7, DatabaseManager.MIGRATION_7_8,
-                            DatabaseManager.MIGRATION_8_9, DatabaseManager.MIGRATION_9_10).build();
+                            DatabaseManager.MIGRATION_8_9, DatabaseManager.MIGRATION_9_10,
+                            DatabaseManager.MIGRATION_10_11).build();
             try {
                 assertEquals(1, db.concertDao().countByDate(LocalDate.of(2026, 10, 21)));
                 assertTrue(db.expenseDao().insert(expense(1, 12000)) > 0);

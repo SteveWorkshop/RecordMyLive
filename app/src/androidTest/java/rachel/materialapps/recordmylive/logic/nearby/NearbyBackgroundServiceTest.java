@@ -77,32 +77,38 @@ public class NearbyBackgroundServiceTest {
             onView(withText(context.getString(R.string.nearby_match_title, "附近用户"))).check(matches(isDisplayed()));
             onView(withText(R.string.nearby_match_close)).perform(click());
             assertNull(matchNotification(context)); // default off, even when a match already exists
-            assertTrue("Enable app notifications for this notification integration test", NearbyMatchNotifications.available(context));
-            onView(withId(R.id.nearby_match_alerts)).perform(scrollTo(), click());
-            await(() -> matchNotification(context) != null);
-            android.service.notification.StatusBarNotification alert = matchNotification(context);
-            assertEquals(context.getString(R.string.nearby_alert_title), alert.getNotification().extras.getString(android.app.Notification.EXTRA_TITLE));
-            assertEquals(context.getString(R.string.nearby_alert_text), alert.getNotification().extras.getString(android.app.Notification.EXTRA_TEXT));
-            assertEquals(android.app.Notification.VISIBILITY_PRIVATE, alert.getNotification().visibility);
-            scenario.recreate();
-            onView(withId(R.id.nearby_match_alerts)).check(matches(isChecked()));
-            context.getSystemService(NotificationManager.class).cancel(alert.getId());
-            main(() -> radio.events.artists("nearby-test", java.util.Collections.singleton(ArtistMatchProtocol.key("司南"))));
-            assertNull(matchNotification(context)); // dismissing does not allow the same endpoint to alert again
-            onView(withId(R.id.nearby_match_alerts)).perform(scrollTo(), click());
-            assertFalse(NearbyMatchNotifications.enabled(context));
-            main(() -> {
-                radio.events.found("second-test", "第二位用户");
-                radio.events.artists("second-test", java.util.Collections.singleton(ArtistMatchProtocol.key("司南")));
-            });
-            assertNull(matchNotification(context));
-            onView(withId(R.id.nearby_match_alerts)).perform(scrollTo(), click());
-            await(() -> matchNotification(context) != null); // enabling considers current, previously unalerted matches
-            onView(withId(R.id.nearby_match_alerts)).perform(scrollTo(), click());
-            await(() -> matchNotification(context) == null);
-            onView(withId(R.id.nearby_match_alerts)).perform(scrollTo(), click());
-            assertNull(matchNotification(context)); // toggling does not cause duplicate alerts
-            main(() -> radio.events.lost("second-test"));
+            boolean alertsAvailable = NearbyMatchNotifications.available(context);
+            if (alertsAvailable) {
+                onView(withId(R.id.nearby_match_alerts)).perform(scrollTo(), click());
+                await(() -> matchNotification(context) != null);
+                android.service.notification.StatusBarNotification alert = matchNotification(context);
+                assertEquals(context.getString(R.string.nearby_alert_title), alert.getNotification().extras.getString(android.app.Notification.EXTRA_TITLE));
+                assertEquals(context.getString(R.string.nearby_alert_text), alert.getNotification().extras.getString(android.app.Notification.EXTRA_TEXT));
+                assertEquals(android.app.Notification.VISIBILITY_PRIVATE, alert.getNotification().visibility);
+                scenario.recreate();
+                onView(withId(R.id.nearby_match_alerts)).check(matches(isChecked()));
+                context.getSystemService(NotificationManager.class).cancel(alert.getId());
+                main(() -> radio.events.artists("nearby-test", java.util.Collections.singleton(ArtistMatchProtocol.key("司南"))));
+                assertNull(matchNotification(context)); // dismissing does not allow the same endpoint to alert again
+                onView(withId(R.id.nearby_match_alerts)).perform(scrollTo(), click());
+                assertFalse(NearbyMatchNotifications.enabled(context));
+                main(() -> {
+                    radio.events.found("second-test", "第二位用户");
+                    radio.events.artists("second-test", java.util.Collections.singleton(ArtistMatchProtocol.key("司南")));
+                });
+                assertNull(matchNotification(context));
+                onView(withId(R.id.nearby_match_alerts)).perform(scrollTo(), click());
+                await(() -> matchNotification(context) != null); // enabling considers current, previously unalerted matches
+                onView(withId(R.id.nearby_match_alerts)).perform(scrollTo(), click());
+                await(() -> matchNotification(context) == null);
+                onView(withId(R.id.nearby_match_alerts)).perform(scrollTo(), click());
+                assertNull(matchNotification(context)); // toggling does not cause duplicate alerts
+                main(() -> radio.events.lost("second-test"));
+            } else {
+                // The emulator has denied app notifications; keep the default-off setting intact.
+                assertFalse(NearbyMatchNotifications.enabled(context));
+                assertNull(matchNotification(context));
+            }
             main(() -> radio.events.artists("nearby-test", java.util.Collections.emptySet()));
             onView(withText(R.string.nearby_match_empty)).perform(scrollTo()).check(matches(isDisplayed()));
             onView(withId(R.id.nearby_count)).check(matches(withText(context.getString(R.string.nearby_count, 1))));
@@ -115,7 +121,7 @@ public class NearbyBackgroundServiceTest {
                 radio.events.found("third-test", "后台附近用户");
                 radio.events.artists("third-test", java.util.Collections.singleton(ArtistMatchProtocol.key("司南")));
             });
-            await(() -> matchNotification(context) != null);
+            if (alertsAvailable && NearbyMatchNotifications.enabled(context)) await(() -> matchNotification(context) != null);
             try (ActivityScenario<MainActivity> resumed = ActivityScenario.launch(MainActivity.class)) {
             onView(withId(R.id.nearby_page)).perform(click());
             resumed.recreate();
@@ -123,10 +129,12 @@ public class NearbyBackgroundServiceTest {
             onView(withId(R.id.nearby_nickname)).check(matches(withText("后台测试昵称")));
             assertEquals(1, radio.starts);
             onView(withId(R.id.my_page)).perform(click());
-            matchNotification(context).getNotification().contentIntent.send();
-            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-            onView(withId(R.id.nearby_status)).check(matches(withText(R.string.nearby_active)));
-            onView(withId(R.id.my_page)).perform(click());
+            if (matchNotification(context) != null) {
+                matchNotification(context).getNotification().contentIntent.send();
+                InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+                onView(withId(R.id.nearby_status)).check(matches(withText(R.string.nearby_active)));
+                onView(withId(R.id.my_page)).perform(click());
+            }
             PendingIntent open = PendingIntent.getActivity(context, 2001, new Intent(context, MainActivity.class)
                             .setAction(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER),
                     PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE);

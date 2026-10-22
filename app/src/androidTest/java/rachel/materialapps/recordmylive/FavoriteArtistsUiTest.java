@@ -22,6 +22,44 @@ import rachel.materialapps.recordmylive.ui.MainActivity;
 
 @RunWith(AndroidJUnit4.class)
 public class FavoriteArtistsUiTest {
+    @Test public void nearbyMatchTogglePersistsAndUpdatesSelectedCount() {
+        String name = "Nearby selection QA " + Long.toHexString(System.nanoTime());
+        FavoriteArtistDao dao = DatabaseManager.getInstance(
+                InstrumentationRegistry.getInstrumentation().getTargetContext()).favoriteArtistDao();
+        FavoriteArtistEntity artist = new FavoriteArtistEntity();
+        artist.setName(name);
+        artist.setMatchName(ArtistNameNormalizer.comparisonKey(name));
+        artist.setCreatedAt(System.currentTimeMillis());
+        long id = dao.insert(artist);
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+            onView(withId(R.id.my_page)).perform(click());
+            onView(withId(R.id.favorite_artists)).perform(click());
+            onView(withId(R.id.nearby_selection_count)).check(matches(withText(
+                    InstrumentationRegistry.getInstrumentation().getTargetContext().getString(
+                            R.string.favorite_artists_nearby_count, dao.getNearbyMatchSelectedCount()))));
+            onView(allOf(withId(R.id.nearby_match_selected), withTagValue(org.hamcrest.Matchers.is((Object) id))))
+                    .perform(click());
+            awaitSelection(dao, id, true);
+            onView(withId(R.id.nearby_selection_count)).check(matches(withText(
+                    InstrumentationRegistry.getInstrumentation().getTargetContext().getString(
+                            R.string.favorite_artists_nearby_count, dao.getNearbyMatchSelectedCount()))));
+            onView(allOf(withId(R.id.nearby_match_selected), withTagValue(org.hamcrest.Matchers.is((Object) id))))
+                    .perform(click());
+            awaitSelection(dao, id, false);
+        } finally {
+            dao.delete(id);
+        }
+    }
+
+    private void awaitSelection(FavoriteArtistDao dao, long id, boolean selected) {
+        long deadline = SystemClock.uptimeMillis() + 5000;
+        do {
+            FavoriteArtistEntity artist = dao.getById(id);
+            if (artist != null && artist.isNearbyMatchSelected() == selected) return;
+            SystemClock.sleep(50);
+        } while (SystemClock.uptimeMillis() < deadline);
+        fail("Nearby artist selection did not complete");
+    }
     @Test public void separateEditorSupportsCreateRenameCancelDuplicateAndDelete() {
         String suffix = Long.toHexString(System.nanoTime());
         String name = "Taylor Swift QA " + suffix;

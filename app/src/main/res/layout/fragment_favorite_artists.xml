@@ -7,6 +7,13 @@
             app:navigationIcon="@drawable/baseline_arrow_back_24px" app:navigationContentDescription="@string/favorite_artists_back" app:title="@string/favorite_artists" />
         <TextView android:id="@+id/artist_count" android:layout_width="match_parent" android:layout_height="wrap_content"
             android:padding="24dp" android:accessibilityHeading="true" android:textAppearance="?attr/textAppearanceTitleMedium" />
+        <TextView android:id="@+id/nearby_selection_count" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:paddingHorizontal="24dp" android:paddingBottom="8dp"
+            android:textAppearance="?attr/textAppearanceTitleSmall" android:textColor="?attr/colorOnSurface" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:paddingHorizontal="24dp" android:paddingBottom="16dp"
+            android:text="@string/favorite_artists_nearby_hint" android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="?attr/colorOnSurfaceVariant" />
         <TextView android:id="@+id/empty" android:layout_width="match_parent" android:layout_height="wrap_content"
             android:paddingHorizontal="24dp" android:paddingBottom="24dp" android:text="@string/favorite_artists_empty"
             android:textAppearance="?attr/textAppearanceBodyMedium" android:textColor="?attr/colorOnSurfaceVariant" android:visibility="gone" />

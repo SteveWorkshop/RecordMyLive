@@ -19,6 +19,8 @@ public class FavoriteArtistEntity {
     private long createdAt;
     @androidx.room.ColumnInfo(defaultValue = "0")
     private long sortOrder;
+    @androidx.room.ColumnInfo(defaultValue = "0")
+    private boolean nearbyMatchSelected;
     /** File name in the app-private artist_images directory; never a remote URL. */
     private String imageFile;
 }

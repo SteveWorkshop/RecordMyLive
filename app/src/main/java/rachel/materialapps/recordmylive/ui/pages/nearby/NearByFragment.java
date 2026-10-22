@@ -11,6 +11,10 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.graphics.drawable.GradientDrawable;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -25,6 +29,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.material.color.MaterialColors;
 import rachel.materialapps.recordmylive.R;
 import rachel.materialapps.recordmylive.databinding.FragmentNearByBinding;
 import rachel.materialapps.recordmylive.databinding.ItemNearbyPersonBinding;
@@ -33,6 +38,7 @@ import rachel.materialapps.recordmylive.logic.nearby.NearbySession;
 import rachel.materialapps.recordmylive.logic.nearby.NearbyMatchNotifications;
 import rachel.materialapps.recordmylive.logic.nearby.NearbyDiscovery;
 import rachel.materialapps.recordmylive.logic.repository.ProfileRepository;
+import rachel.materialapps.recordmylive.logic.repository.FavoriteArtistRepository;
 import rachel.materialapps.recordmylive.logic.util.ProfileImages;
 
 public class NearByFragment extends Fragment {
@@ -71,6 +77,8 @@ public class NearByFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         model = new ViewModelProvider(this).get(NearByViewModel.class);
         profile = new ProfileRepository(requireContext());
+        new FavoriteArtistRepository(requireContext()).getAll().observe(getViewLifecycleOwner(),
+                favorites -> NearbyDiscovery.get(requireContext()).preloadFavorites(favorites));
         PeopleAdapter adapter = new PeopleAdapter(peer -> {
             if (getChildFragmentManager().findFragmentByTag("shared_artists") != null) return;
             SharedArtistsDialog dialog = new SharedArtistsDialog();
@@ -81,6 +89,7 @@ public class NearByFragment extends Fragment {
         });
         binding.nearbyPeople.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.nearbyPeople.setAdapter(adapter);
+        binding.nearbyHelp.setOnClickListener(this::showNearbyHelp);
         binding.nearbyToggle.setOnClickListener(v -> {
             NearbySession.Snapshot state = model.getState().getValue();
             if (state != null && (state.stage == NearbySession.Stage.STARTING || state.stage == NearbySession.Stage.ACTIVE))
@@ -210,6 +219,31 @@ public class NearByFragment extends Fragment {
         String nickname = model.getNickname(profile.getNickname());
         binding.nearbyNickname.setText(nickname.isEmpty() ? getString(R.string.profile_unset) : nickname);
         ProfileImages.show(binding.nearbyAvatar, ProfileImages.file(requireContext(), profile.getAvatarFile()));
+    }
+
+    private void showNearbyHelp(View anchor) {
+        int horizontalPadding = dp(16);
+        int maxWidth = Math.min(dp(320), getResources().getDisplayMetrics().widthPixels - dp(48));
+        TextView message = new TextView(requireContext());
+        message.setText(R.string.nearby_visibility_hint);
+        message.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyMedium);
+        message.setTextColor(MaterialColors.getColor(anchor, com.google.android.material.R.attr.colorOnSurface));
+        message.setPadding(horizontalPadding, dp(12), horizontalPadding, dp(12));
+        GradientDrawable background = new GradientDrawable();
+        background.setColor(MaterialColors.getColor(anchor, com.google.android.material.R.attr.colorSurfaceContainerHigh));
+        background.setCornerRadius(dp(8));
+        LinearLayout content = new LinearLayout(requireContext());
+        content.setPadding(dp(4), dp(4), dp(4), dp(4));
+        content.addView(message, new LinearLayout.LayoutParams(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+        PopupWindow popup = new PopupWindow(content, maxWidth + dp(8), ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        popup.setBackgroundDrawable(background);
+        popup.setOutsideTouchable(true);
+        popup.setElevation(dp(8));
+        popup.showAsDropDown(anchor, 0, 0, android.view.Gravity.END);
+    }
+
+    private int dp(float value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
     }
 
     private void refreshAlerts() {

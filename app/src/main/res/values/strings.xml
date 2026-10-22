@@ -88,6 +88,10 @@
     <string name="favorite_artist_name">艺人名称</string>
     <string name="favorite_artist_add">添加喜欢的艺人</string>
     <string name="favorite_artist_count">已喜欢 · %1$d 位</string>
+    <string name="favorite_artists_nearby_count">附近匹配艺人 · %1$d/20</string>
+    <string name="favorite_artists_nearby_hint">您可以选择显示哪些艺人用于同担匹配，最多可以选择20个</string>
+    <string name="favorite_artist_nearby_selection">参与附近同担匹配：%1$s</string>
+    <string name="favorite_artists_nearby_limit">附近匹配最多选择 20 位艺人</string>
     <string name="favorite_artists_empty">还没有添加喜欢的艺人，点击右下角按钮开始吧。</string>
     <string name="favorite_artist_edit">编辑艺人</string>
     <string name="favorite_artist_image">艺人头像</string>

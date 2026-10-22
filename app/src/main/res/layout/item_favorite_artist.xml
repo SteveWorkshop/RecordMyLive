@@ -10,6 +10,9 @@
         <ImageView android:id="@+id/artist_image" android:layout_width="64dp" android:layout_height="64dp" android:importantForAccessibility="no" />
         <TextView android:id="@+id/artist_name" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
             android:layout_marginStart="16dp" android:textAppearance="?attr/textAppearanceTitleMedium" android:textColor="?attr/colorOnSurface" />
+        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/nearby_match_selected"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:minWidth="48dp" android:minHeight="48dp" android:contentDescription="@string/favorite_artist_nearby_selection" />
         <com.google.android.material.button.MaterialButton android:id="@+id/remove_artist" style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp"
             android:minHeight="48dp" app:icon="@drawable/baseline_delete_24px" />

@@ -12,7 +12,7 @@ import rachel.materialapps.recordmylive.logic.util.ArtistNameNormalizer;
 
 /** Versioned, bounded BYTES payload. Hashes reduce disclosure but are not secret against guessing. */
 public final class ArtistMatchProtocol {
-    public static final int MAX_ARTISTS = 1000;
+    public static final int MAX_ARTISTS = 20;
     private static final int MAGIC = 0x47514131;
     private ArtistMatchProtocol() { }
 
