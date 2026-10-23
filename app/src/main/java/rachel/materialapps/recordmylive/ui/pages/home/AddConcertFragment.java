@@ -56,6 +56,8 @@ import rachel.materialapps.recordmylive.logic.entity.SeatInfo;
 import rachel.materialapps.recordmylive.logic.entity.dto.ConcertWithSongs;
 import rachel.materialapps.recordmylive.logic.util.ArtistNameNormalizer;
 import rachel.materialapps.recordmylive.logic.util.TicketPrice;
+import rachel.materialapps.recordmylive.logic.importer.ConcertImportResult;
+import com.bumptech.glide.Glide;
 
 public class AddConcertFragment extends Fragment {
 
@@ -88,6 +90,7 @@ public class AddConcertFragment extends Fragment {
     private boolean formPopulated;
     private ConcertEntity originalConcert;
     private Uri selectedCoverUri;
+    private androidx.appcompat.app.AlertDialog importDialog;
     private ActivityResultLauncher<String[]> coverPicker;
     private final List<ConcertSongEntity> songs = new ArrayList<>();
     private final List<String> artists = new ArrayList<>();
@@ -298,6 +301,21 @@ public class AddConcertFragment extends Fragment {
         updateDurationText();
         initToolbar();
         editMode = getArguments() != null && getArguments().containsKey("concertId");
+        binding.toolbar.getMenu().findItem(R.id.action_import_link).setVisible(!editMode);
+        mViewModel.getLinkImportState().observe(getViewLifecycleOwner(), state -> {
+            binding.importProgress.setVisibility(state.loading ? View.VISIBLE : View.GONE);
+            binding.toolbar.getMenu().findItem(R.id.action_import_link)
+                    .setEnabled(!state.loading && state.result == null);
+            binding.toolbar.getMenu().findItem(R.id.action_import_link)
+                    .setTitle(state.loading ? "正在解析链接…" : "从链接导入");
+            updateSaveAvailability();
+            if (state.error != null) {
+                Snackbar.make(binding.getRoot(), state.error, Snackbar.LENGTH_LONG).show();
+                mViewModel.finishLinkImport(false);
+            } else if (state.result != null && !editMode) {
+                showImportPreview(state.result);
+            }
+        });
         if (editMode) {
             binding.toolbar.setTitle("编辑演出");
             binding.layoutCover.tvCoverHint.setText("点击图片可更换图片");
@@ -310,6 +328,7 @@ public class AddConcertFragment extends Fragment {
         mViewModel.getSaveState().observe(getViewLifecycleOwner(), state -> {
             boolean saving = state == AddConcertViewModel.SaveState.SAVING;
             binding.toolbar.getMenu().findItem(R.id.action_save).setEnabled(!saving);
+            updateSaveAvailability();
             binding.toolbar.getMenu().findItem(R.id.action_save)
                     .setTitle(saving ? "保存中…" : "保存");
             switch (state) {
@@ -360,6 +379,11 @@ public class AddConcertFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        if (importDialog != null) {
+            importDialog.setOnCancelListener(null);
+            importDialog.dismiss();
+            importDialog = null;
+        }
         super.onDestroyView();
         binding = null;
     }
@@ -525,6 +549,11 @@ public class AddConcertFragment extends Fragment {
 
         binding.toolbar.setOnMenuItemClickListener(item -> {
 
+            if (item.getItemId() == R.id.action_import_link) {
+                showLinkImportDialog();
+                return true;
+            }
+
             if (item.getItemId() == R.id.action_save) {
                 saveConcert();
                 return true;
@@ -608,10 +637,154 @@ public class AddConcertFragment extends Fragment {
         if (binding == null || selectedCoverUri == null) {
             return;
         }
-        binding.layoutCover.imgCover.setImageURI(selectedCoverUri);
+        Glide.with(this).load(selectedCoverUri).into(binding.layoutCover.imgCover);
         binding.layoutCover.coverPlaceholder.setVisibility(View.GONE);
         binding.layoutCover.tvCoverHint.setText(editMode
                 ? "点击图片可更换图片" : "更换封面");
+    }
+
+    private void updateSaveAvailability() {
+        if (binding == null || mViewModel == null) return;
+        AddConcertViewModel.LinkImportState state = mViewModel.getLinkImportState().getValue();
+        boolean importing = state != null && (state.loading || state.result != null);
+        boolean saving = mViewModel.getSaveState().getValue() == AddConcertViewModel.SaveState.SAVING;
+        binding.toolbar.getMenu().findItem(R.id.action_save).setEnabled(!saving && !importing);
+        binding.toolbar.getMenu().findItem(R.id.action_import_link).setEnabled(!saving && !importing);
+    }
+
+    private void showLinkImportDialog() {
+        if (editMode || binding == null) return;
+        TextInputLayout layout = new TextInputLayout(requireContext());
+        layout.setHint("大麦、秀动链接或分享文案");
+        layout.setPadding(dp(24), dp(8), dp(24), 0);
+        EditText input = new EditText(requireContext());
+        input.setInputType(android.text.InputType.TYPE_CLASS_TEXT
+                | android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        input.setMinLines(2);
+        layout.addView(input);
+        importDialog = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("从链接导入")
+                .setMessage("粘贴演出链接或分享文案，自动识别平台。")
+                .setView(layout)
+                .setNegativeButton("取消", null)
+                .setPositiveButton("解析", null).create();
+        importDialog.setOnShowListener(dialog -> importDialog.getButton(
+                androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String text = input.getText().toString().trim();
+            if (text.isEmpty()) { layout.setError("请粘贴演出链接"); return; }
+            importDialog.dismiss();
+            importDialog = null;
+            mViewModel.importLink(text);
+        }));
+        importDialog.show();
+    }
+
+    private void showImportPreview(ConcertImportResult result) {
+        if (importDialog != null && importDialog.isShowing()) return;
+        LinearLayout content = new LinearLayout(requireContext());
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(dp(24), dp(8), dp(24), dp(8));
+        TextView summary = new TextView(requireContext());
+        String text = "来源：" + result.platform + "\n" + result.name + "\n" + result.city + " · " + result.venue
+                + (result.artists.isEmpty() ? "" : "\n歌手：" + android.text.TextUtils.join("、", result.artists))
+                + (result.durationMinutes == null ? "" : "\n时长：" + result.durationMinutes + "分钟")
+               // + (result.priceRange == null || result.priceRange.isEmpty() ? "" : "\n参考票价：" + result.priceRange + "元（不填入个人票价）")
+                //+ "\n\n所选场次将更新演出日期和时间；切换日期会清空原开票时间。其他信息只补充空白项。"
+                ;
+        if (!result.warnings.isEmpty()) text += "\n\n" + android.text.TextUtils.join("\n", result.warnings);
+        summary.setText(text);
+        content.addView(summary);
+        android.widget.Spinner spinner = new android.widget.Spinner(requireContext());
+        int defaultIndex = 0;
+        if (!result.performances.isEmpty()) {
+            List<String> labels = new ArrayList<>();
+            for (int i = 0; i < result.performances.size(); i++) {
+                ConcertImportResult.Performance p = result.performances.get(i);
+                labels.add(p.label());
+                if (p.date.equals(selectedDate)) defaultIndex = i;
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
+                    android.R.layout.simple_spinner_item, labels);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+            spinner.setSelection(defaultIndex);
+            content.addView(spinner, new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, dp(56)));
+        }
+        android.widget.ScrollView scroll = new android.widget.ScrollView(requireContext());
+        scroll.addView(content);
+        importDialog = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(result.performances.isEmpty() ? "确认导入信息" : "选择演出场次")
+                .setView(scroll)
+                .setNegativeButton("取消", (dialog, which) -> {
+                    importDialog = null;
+                    mViewModel.finishLinkImport(false);
+                })
+                .setPositiveButton("填入表单", (dialog, which) -> {
+                    ConcertImportResult.Performance performance = result.performances.isEmpty()
+                            ? null : result.performances.get(spinner.getSelectedItemPosition());
+                    applyImportedConcert(result, performance);
+                    importDialog = null;
+                })
+                .setOnCancelListener(dialog -> {
+                    importDialog = null;
+                    mViewModel.finishLinkImport(false);
+                }).create();
+        importDialog.show();
+    }
+
+    private void applyImportedConcert(ConcertImportResult result, ConcertImportResult.Performance performance) {
+        if (binding == null) return;
+        fillEmpty(binding.layoutBasicInfo.edtName, result.name);
+        fillEmpty(binding.layoutLocation.edtCity, result.city);
+        fillEmpty(binding.layoutLocation.edtVenue, result.venue);
+        if (selectedConcertType == null && result.type != null) {
+            selectedConcertType = result.type;
+            binding.layoutBasicInfo.actType.setText(result.type.getDisplayName(), false);
+        }
+        if (selectedDurationMinutes == null && result.durationMinutes != null) {
+            selectedDurationMinutes = result.durationMinutes;
+            updateDurationText();
+        }
+        if (performance != null) {
+            if (selectedDate != null && !selectedDate.equals(performance.date)) {
+                selectedTicketSaleDate = null;
+                selectedTicketSaleTime = null;
+            }
+            selectedDate = performance.date;
+            selectedTime = performance.time;
+            binding.layoutBasicInfo.edtDate.setText(selectedDate.toString());
+            binding.layoutBasicInfo.edtTime.setText(selectedTime == null ? "" : selectedTime.toString());
+            binding.layoutBasicInfo.layoutDate.setError(null);
+            if (selectedTicketSaleDate == null) {
+                selectedTicketSaleDate = performance.saleDate;
+                selectedTicketSaleTime = performance.saleTime;
+            }
+            showTicketSaleSelection();
+        }
+        syncArtistsFromViews();
+        if (artists.stream().allMatch(name -> name == null || name.trim().isEmpty())) {
+            artists.clear();
+            for (String name : result.artists) {
+                if (artists.size() >= AppConstants.MAX_ARTIST_COUNT) break;
+                String normalized = ArtistNameNormalizer.normalize(name);
+                if (!normalized.isEmpty() && !artists.contains(normalized)) artists.add(normalized);
+            }
+            renderArtists();
+        }
+        boolean keepCover = selectedCoverUri == null && result.localCoverPath != null;
+        if (keepCover) {
+            selectedCoverUri = Uri.fromFile(new java.io.File(result.localCoverPath));
+            showSelectedCover();
+        }
+        fillEmpty(binding.layoutNote.edtNote, "来源：" + result.platform + "\n" + result.sourceUrl);
+        mViewModel.finishLinkImport(keepCover);
+        Snackbar.make(binding.getRoot(), "已填入解析信息",
+                Snackbar.LENGTH_LONG).show();
+    }
+
+    private void fillEmpty(EditText input, String value) {
+        if (input.getText().toString().trim().isEmpty() && value != null && !value.isEmpty()) input.setText(value);
     }
 
     private ConcertEntity buildConcert(){

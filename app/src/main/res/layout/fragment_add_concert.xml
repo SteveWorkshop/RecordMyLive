@@ -10,14 +10,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            style="@style/Widget.Material3.Toolbar"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@drawable/baseline_arrow_back_24px"
-            app:menu="@menu/menu_save"
-            app:title="添加演出"/>
+            android:layout_height="?attr/actionBarSize">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                style="@style/Widget.Material3.Toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:navigationIcon="@drawable/baseline_arrow_back_24px"
+                app:menu="@menu/menu_add_concert"
+                app:title="添加演出" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/import_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:trackThickness="4dp" />
+
+        </FrameLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
