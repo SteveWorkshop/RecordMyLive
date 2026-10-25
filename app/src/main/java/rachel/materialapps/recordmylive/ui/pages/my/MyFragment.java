@@ -98,7 +98,7 @@ public class MyFragment extends Fragment {
                 || getResources().getConfiguration().fontScale > 1.3f;
         colors.setColumnCount(stacked ? 1 : 2);
         int selected = ThemeSettings.getColorIndex(requireContext());
-        int primary = MaterialColors.getColor(view, com.google.android.material.R.attr.colorPrimary);
+        int primary = MaterialColors.getColor(view, androidx.appcompat.R.attr.colorPrimary);
         int outline = MaterialColors.getColor(view, com.google.android.material.R.attr.colorOutlineVariant);
         int surface = MaterialColors.getColor(view, com.google.android.material.R.attr.colorSurfaceContainerLow);
         int selectedSurface = MaterialColors.getColor(view, com.google.android.material.R.attr.colorSecondaryContainer);

@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.color.MaterialColors;
+import com.google.android.material.textview.MaterialTextView;
 import rachel.materialapps.recordmylive.R;
 import rachel.materialapps.recordmylive.databinding.FragmentNearByBinding;
 import rachel.materialapps.recordmylive.databinding.ItemNearbyPersonBinding;
@@ -224,7 +225,7 @@ public class NearByFragment extends Fragment {
     private void showNearbyHelp(View anchor) {
         int horizontalPadding = dp(16);
         int maxWidth = Math.min(dp(320), getResources().getDisplayMetrics().widthPixels - dp(48));
-        TextView message = new TextView(requireContext());
+        TextView message = new MaterialTextView(requireContext());
         message.setText(R.string.nearby_visibility_hint);
         message.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyMedium);
         message.setTextColor(MaterialColors.getColor(anchor, com.google.android.material.R.attr.colorOnSurface));
@@ -300,7 +301,7 @@ public class NearByFragment extends Fragment {
             android.content.Context context = requireContext();
             android.widget.LinearLayout content = new android.widget.LinearLayout(context);
             content.setOrientation(android.widget.LinearLayout.VERTICAL);
-            android.widget.TextView note = new android.widget.TextView(context);
+            android.widget.TextView note = new MaterialTextView(context);
             int padding = Math.round(24 * getResources().getDisplayMetrics().density);
             note.setPadding(padding, padding / 2, padding, padding / 2);
             note.setText(R.string.nearby_match_note);

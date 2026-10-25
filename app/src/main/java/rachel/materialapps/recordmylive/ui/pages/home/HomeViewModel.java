@@ -32,6 +32,8 @@ public class HomeViewModel extends AndroidViewModel {
 
     private final MediatorLiveData<List<ConcertEntity>> concerts =
             new MediatorLiveData<>();
+    private final MutableLiveData<Boolean> initialLoading =
+            new MutableLiveData<>(true);
 
     private LiveData<List<ConcertEntity>> currentSource;
 
@@ -57,11 +59,20 @@ public class HomeViewModel extends AndroidViewModel {
             concerts.removeSource(currentSource);
         }
         currentSource = repository.getConcertsByDate(date);
-        concerts.addSource(currentSource, concerts::setValue);
+        concerts.addSource(currentSource, items -> {
+            concerts.setValue(items);
+            if (Boolean.TRUE.equals(initialLoading.getValue())) {
+                initialLoading.setValue(false);
+            }
+        });
     }
 
     public LiveData<List<ConcertEntity>> getConcerts() {
         return concerts;
+    }
+
+    public LiveData<Boolean> getInitialLoading() {
+        return initialLoading;
     }
 
     public LiveData<List<ConcertEntity>> getUpcomingConcerts() {

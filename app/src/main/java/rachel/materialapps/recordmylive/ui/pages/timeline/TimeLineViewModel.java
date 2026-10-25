@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import java.time.YearMonth;
@@ -19,16 +20,26 @@ import rachel.materialapps.recordmylive.logic.repository.ConcertRepository;
 public class TimeLineViewModel extends AndroidViewModel {
     private final ConcertRepository repository;
     private final LiveData<List<TimeLineItem>> timelineItems;
+    private final MutableLiveData<Boolean> initialLoading =
+            new MutableLiveData<>(true);
 
     public TimeLineViewModel(@NonNull Application application) {
         super(application);
         repository = new ConcertRepository(application);
         timelineItems = Transformations.map(
-                repository.getAllConcerts(), TimeLineViewModel::buildTimelineItems);
+                repository.getAllConcerts(), concerts -> {
+                    List<TimeLineItem> items = buildTimelineItems(concerts);
+                    initialLoading.setValue(false);
+                    return items;
+                });
     }
 
     public LiveData<List<TimeLineItem>> getTimelineItems() {
         return timelineItems;
+    }
+
+    public LiveData<Boolean> getInitialLoading() {
+        return initialLoading;
     }
 
     public void deleteConcert(ConcertEntity concert, Consumer<Boolean> callback) {

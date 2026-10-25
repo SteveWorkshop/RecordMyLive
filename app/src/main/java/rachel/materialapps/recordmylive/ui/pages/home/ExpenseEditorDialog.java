@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.ScrollView;
 import androidx.annotation.NonNull;
@@ -15,6 +14,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import java.time.LocalDate;
@@ -27,7 +27,7 @@ import rachel.materialapps.recordmylive.logic.util.TicketPrice;
 
 public class ExpenseEditorDialog extends DialogFragment {
     private static final String DATE_PICKER_TAG = "expenseDatePicker";
-    private Spinner category;
+    private MaterialAutoCompleteTextView category;
     private TextInputEditText amount;
     private TextInputEditText date;
     private TextInputEditText note;
@@ -53,16 +53,20 @@ public class ExpenseEditorDialog extends DialogFragment {
         form.setOrientation(LinearLayout.VERTICAL);
         int padding = (int) (24 * getResources().getDisplayMetrics().density);
         form.setPadding(padding, padding / 2, padding, 0);
-        category = new Spinner(requireContext());
         String[] labels = new String[ExpenseCategory.values().length];
         for (int i = 0; i < labels.length; i++) labels[i] = ExpenseCategory.values()[i].getDisplayName();
+        TextInputLayout categoryLayout = new TextInputLayout(requireContext());
+        categoryLayout.setHint("费用分类");
+        categoryLayout.setEndIconMode(TextInputLayout.END_ICON_DROPDOWN_MENU);
+        category = new MaterialAutoCompleteTextView(requireContext());
+        category.setInputType(InputType.TYPE_NULL);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_item, labels);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                android.R.layout.simple_list_item_1, labels);
         category.setAdapter(adapter);
-        category.setSelection(ExpenseCategory.fromKey(values.getString("category")).ordinal());
+        category.setText(labels[ExpenseCategory.fromKey(values.getString("category")).ordinal()], false);
         category.setContentDescription("费用分类");
-        form.addView(category, new LinearLayout.LayoutParams(-1, padding * 2));
+        categoryLayout.addView(category, new LinearLayout.LayoutParams(-1, -2));
+        form.addView(categoryLayout, new LinearLayout.LayoutParams(-1, -2));
         amount = addField(form, "金额（元）", InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         date = addField(form, "消费日期", InputType.TYPE_NULL);
         date.setFocusable(false);
@@ -141,7 +145,7 @@ public class ExpenseEditorDialog extends DialogFragment {
         ExpenseEntity expense = new ExpenseEntity();
         expense.setId(requireArguments().getLong("id"));
         expense.setConcertId(requireArguments().getLong("concertId"));
-        expense.setCategory(ExpenseCategory.values()[category.getSelectedItemPosition()].name());
+        expense.setCategory(ExpenseCategory.values()[getCategoryIndex()].name());
         expense.setAmountCents(cents);
         expense.setSpentDate(spentDate);
         expense.setNote(note.getText().toString().trim());
@@ -161,9 +165,17 @@ public class ExpenseEditorDialog extends DialogFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (category == null) return;
-        outState.putString("category", ExpenseCategory.values()[category.getSelectedItemPosition()].name());
+        outState.putString("category", ExpenseCategory.values()[getCategoryIndex()].name());
         outState.putString("amount", amount.getText().toString());
         outState.putString("date", date.getText().toString());
         outState.putString("note", note.getText().toString());
+    }
+
+    private int getCategoryIndex() {
+        String selected = category.getText().toString();
+        for (int i = 0; i < ExpenseCategory.values().length; i++) {
+            if (ExpenseCategory.values()[i].getDisplayName().equals(selected)) return i;
+        }
+        return 0;
     }
 }

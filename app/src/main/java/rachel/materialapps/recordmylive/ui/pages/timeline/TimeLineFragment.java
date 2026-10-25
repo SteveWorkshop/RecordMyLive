@@ -49,6 +49,13 @@ public class TimeLineFragment extends Fragment {
         mViewModel = new ViewModelProvider(this).get(TimeLineViewModel.class);
         initRecyclerView();
         mViewModel.getTimelineItems().observe(getViewLifecycleOwner(), this::renderTimeline);
+        mViewModel.getInitialLoading().observe(getViewLifecycleOwner(), loading -> {
+            if (Boolean.TRUE.equals(loading)) {
+                binding.loadingIndicator.setVisibility(View.VISIBLE);
+                binding.rvTimeline.setVisibility(View.GONE);
+                binding.emptyView.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void initRecyclerView() {
@@ -66,6 +73,7 @@ public class TimeLineFragment extends Fragment {
             if (binding != currentBinding || adapter != currentAdapter) {
                 return;
             }
+            binding.loadingIndicator.setVisibility(View.GONE);
             boolean empty = currentAdapter.getCurrentList().isEmpty();
             binding.rvTimeline.setVisibility(empty ? View.GONE : View.VISIBLE);
             binding.emptyView.setVisibility(empty ? View.VISIBLE : View.GONE);

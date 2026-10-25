@@ -145,11 +145,11 @@ public class TimeLineAdapter extends ListAdapter<TimeLineItem, RecyclerView.View
                 binding.tvRelativeTime.setText(
                         binding.getRoot().getContext().getString(R.string.timeline_days_left, days));
                 binding.tvRelativeTime.setTextColor(
-                        resolveThemeColor(binding.tvRelativeTime, com.google.android.material.R.attr.colorPrimary));
+                        resolveThemeColor(binding.tvRelativeTime, androidx.appcompat.R.attr.colorPrimary));
             } else if (days == 0) {
                 binding.tvRelativeTime.setText(R.string.timeline_today);
                 binding.tvRelativeTime.setTextColor(
-                        resolveThemeColor(binding.tvRelativeTime, com.google.android.material.R.attr.colorPrimary));
+                        resolveThemeColor(binding.tvRelativeTime, androidx.appcompat.R.attr.colorPrimary));
             } else {
                 binding.tvRelativeTime.setText(R.string.timeline_ended);
                 binding.tvRelativeTime.setTextColor(

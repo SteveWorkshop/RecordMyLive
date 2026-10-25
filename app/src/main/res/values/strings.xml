@@ -18,6 +18,7 @@
     <string name="profile_image_error">无法读取图片，请重新选择</string>
     <string name="profile_save_error">保存失败，请重试</string>
     <string name="app_name">歌笺</string>
+    <string name="share_create_concert">创建演出日程</string>
     <string name="calendar_reminder_add">添加日历提醒</string>
     <string name="calendar_reminder_update">更新日历提醒</string>
     <string name="calendar_time_required">请先设置演出日期和时间</string>

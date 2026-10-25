@@ -106,17 +106,17 @@
             android:layout_height="wrap_content"
             android:paddingEnd="80dp">
 
-            <Button android:layout_height="wrap_content" android:layout_width="0dp"
+            <com.google.android.material.button.MaterialButton android:layout_height="wrap_content" android:layout_width="0dp"
                 android:layout_weight="1"
                 android:id="@+id/btnCopy"
                 android:text="复制"/>
 
-            <Button android:layout_height="wrap_content" android:layout_width="0dp"
+            <com.google.android.material.button.MaterialButton android:layout_height="wrap_content" android:layout_width="0dp"
                 android:layout_weight="1"
                 android:id="@+id/btnSave"
                 android:text="保存"/>
 
-            <Button android:layout_height="wrap_content" android:layout_width="0dp"
+            <com.google.android.material.button.MaterialButton android:layout_height="wrap_content" android:layout_width="0dp"
                 android:layout_weight="1"
                 android:id="@+id/btnMail"
                 android:text="邮件"/>

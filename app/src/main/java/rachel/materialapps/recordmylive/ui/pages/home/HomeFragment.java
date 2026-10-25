@@ -24,6 +24,7 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 
 import kotlin.Unit;
 import lombok.Getter;
@@ -58,6 +59,8 @@ public class HomeFragment extends Fragment {
     private LocalDate selectedDate = LocalDate.now();
 
     private Set<LocalDate> concertDates = new HashSet<>();
+    private boolean concertsLoading = true;
+    private List<ConcertEntity> currentConcerts = java.util.Collections.emptyList();
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -94,9 +97,14 @@ public class HomeFragment extends Fragment {
         });
 
         mViewModel.getConcerts().observe(getViewLifecycleOwner(), concerts -> {
-            adapter.submitList(concerts);
-            binding.rvConcert.setVisibility(concerts.isEmpty() ? View.GONE : View.VISIBLE);
-            binding.emptyView.setVisibility(concerts.isEmpty() ? View.VISIBLE : View.GONE);
+            currentConcerts = concerts == null ? java.util.Collections.emptyList() : concerts;
+            adapter.submitList(currentConcerts);
+            updateConcertVisibility(currentConcerts);
+        });
+
+        mViewModel.getInitialLoading().observe(getViewLifecycleOwner(), loading -> {
+            concertsLoading = Boolean.TRUE.equals(loading);
+            updateConcertVisibility(currentConcerts);
         });
 
         mViewModel.getUpcomingConcerts().observe(getViewLifecycleOwner(), concerts -> {
@@ -186,6 +194,14 @@ public class HomeFragment extends Fragment {
         );
         binding.rvConcert.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvConcert.setAdapter(adapter);
+    }
+
+    private void updateConcertVisibility(List<ConcertEntity> concerts) {
+        if (binding == null) return;
+        if (binding.loadingIndicator == null) return;
+        binding.loadingIndicator.setVisibility(concertsLoading ? View.VISIBLE : View.GONE);
+        binding.rvConcert.setVisibility(!concertsLoading && !concerts.isEmpty() ? View.VISIBLE : View.GONE);
+        binding.emptyView.setVisibility(!concertsLoading && concerts.isEmpty() ? View.VISIBLE : View.GONE);
     }
 
     private void openEdit(ConcertEntity concert) {

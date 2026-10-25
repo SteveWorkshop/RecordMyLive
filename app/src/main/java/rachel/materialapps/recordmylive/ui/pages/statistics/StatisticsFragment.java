@@ -13,6 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.textview.MaterialTextView;
+
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -90,7 +92,7 @@ public class StatisticsFragment extends Fragment {
     private void renderRanking(LinearLayout container, List<StatisticsViewModel.RankItem> items) {
         container.removeAllViews();
         if (items.isEmpty()) {
-            TextView empty = new TextView(requireContext());
+            TextView empty = new MaterialTextView(requireContext());
             empty.setText("暂无数据");
             empty.setPadding(0, dp(12), 0, dp(8));
             container.addView(empty);
@@ -102,13 +104,13 @@ public class StatisticsFragment extends Fragment {
             row.setGravity(Gravity.CENTER_VERTICAL);
             row.setPadding(0, dp(10), 0, dp(10));
 
-            TextView name = new TextView(requireContext());
+            TextView name = new MaterialTextView(requireContext());
             name.setText((i + 1) + "   " + item.name);
             name.setTextSize(16);
             row.addView(name, new LinearLayout.LayoutParams(0,
                     ViewGroup.LayoutParams.WRAP_CONTENT, 1));
 
-            TextView count = new TextView(requireContext());
+            TextView count = new MaterialTextView(requireContext());
             count.setText(item.count + " 场");
             count.setTextSize(14);
             row.addView(count);

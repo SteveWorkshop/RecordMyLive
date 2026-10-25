@@ -28,9 +28,14 @@ import android.widget.Toast;
 
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -60,6 +65,9 @@ import rachel.materialapps.recordmylive.logic.importer.ConcertImportResult;
 import com.bumptech.glide.Glide;
 
 public class AddConcertFragment extends Fragment {
+    public static final String ARG_SHARED_CONCERT_TEXT = "sharedConcertText";
+    private static final String STATE_SHARED_IMPORT_STARTED = "sharedImportStarted";
+    private boolean sharedImportStarted;
 
     @Getter
     @Setter
@@ -250,6 +258,7 @@ public class AddConcertFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(AddConcertViewModel.class);
         if (savedInstanceState != null) {
+            sharedImportStarted = savedInstanceState.getBoolean(STATE_SHARED_IMPORT_STARTED, false);
             String date = savedInstanceState.getString("selectedDate");
             String time = savedInstanceState.getString("selectedTime");
             String type = savedInstanceState.getString("selectedConcertType");
@@ -354,11 +363,23 @@ public class AddConcertFragment extends Fragment {
                     break;
             }
         });
+        if (!editMode && !sharedImportStarted && getArguments() != null) {
+            String sharedText = getArguments().getString(ARG_SHARED_CONCERT_TEXT);
+            if (sharedText != null && !sharedText.trim().isEmpty()) {
+                sharedImportStarted = true;
+                mViewModel.importLink(sharedText);
+            }
+        }
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        AddConcertViewModel.LinkImportState importState = mViewModel.getLinkImportState().getValue();
+        // A pending request/result lives in the ViewModel across rotation. If the process
+        // dies instead, restart it from the saved share rather than losing the import.
+        outState.putBoolean(STATE_SHARED_IMPORT_STARTED, sharedImportStarted
+                && (importState == null || (!importState.loading && importState.result == null)));
         outState.putString("selectedDate", selectedDate == null ? null : selectedDate.toString());
         outState.putString("selectedTime", selectedTime == null ? null : selectedTime.toString());
         outState.putString("selectedTicketSaleDate", selectedTicketSaleDate == null
@@ -655,9 +676,9 @@ public class AddConcertFragment extends Fragment {
     private void showLinkImportDialog() {
         if (editMode || binding == null) return;
         TextInputLayout layout = new TextInputLayout(requireContext());
-        layout.setHint("大麦、秀动链接或分享文案");
+        layout.setHint("链接或分享文案");
         layout.setPadding(dp(24), dp(8), dp(24), 0);
-        EditText input = new EditText(requireContext());
+        EditText input = new TextInputEditText(requireContext());
         input.setInputType(android.text.InputType.TYPE_CLASS_TEXT
                 | android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         input.setMinLines(2);
@@ -684,7 +705,7 @@ public class AddConcertFragment extends Fragment {
         LinearLayout content = new LinearLayout(requireContext());
         content.setOrientation(LinearLayout.VERTICAL);
         content.setPadding(dp(24), dp(8), dp(24), dp(8));
-        TextView summary = new TextView(requireContext());
+        TextView summary = new MaterialTextView(requireContext());
         String text = "来源：" + result.platform + "\n" + result.name + "\n" + result.city + " · " + result.venue
                 + (result.artists.isEmpty() ? "" : "\n歌手：" + android.text.TextUtils.join("、", result.artists))
                 + (result.durationMinutes == null ? "" : "\n时长：" + result.durationMinutes + "分钟")
@@ -694,7 +715,7 @@ public class AddConcertFragment extends Fragment {
         if (!result.warnings.isEmpty()) text += "\n\n" + android.text.TextUtils.join("\n", result.warnings);
         summary.setText(text);
         content.addView(summary);
-        android.widget.Spinner spinner = new android.widget.Spinner(requireContext());
+        final int[] selectedPerformanceIndex = {0};
         int defaultIndex = 0;
         if (!result.performances.isEmpty()) {
             List<String> labels = new ArrayList<>();
@@ -703,12 +724,20 @@ public class AddConcertFragment extends Fragment {
                 labels.add(p.label());
                 if (p.date.equals(selectedDate)) defaultIndex = i;
             }
+            selectedPerformanceIndex[0] = defaultIndex;
+            TextInputLayout selectionLayout = new TextInputLayout(requireContext());
+            selectionLayout.setHint("演出场次");
+            selectionLayout.setEndIconMode(TextInputLayout.END_ICON_DROPDOWN_MENU);
+            MaterialAutoCompleteTextView dropdown = new MaterialAutoCompleteTextView(requireContext());
             ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
-                    android.R.layout.simple_spinner_item, labels);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(adapter);
-            spinner.setSelection(defaultIndex);
-            content.addView(spinner, new LinearLayout.LayoutParams(
+                    android.R.layout.simple_list_item_1, labels);
+            dropdown.setAdapter(adapter);
+            dropdown.setText(labels.get(defaultIndex), false);
+            dropdown.setOnItemClickListener((parent, view, position, id) ->
+                    selectedPerformanceIndex[0] = position);
+            selectionLayout.addView(dropdown, new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            content.addView(selectionLayout, new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, dp(56)));
         }
         android.widget.ScrollView scroll = new android.widget.ScrollView(requireContext());
@@ -722,7 +751,7 @@ public class AddConcertFragment extends Fragment {
                 })
                 .setPositiveButton("填入表单", (dialog, which) -> {
                     ConcertImportResult.Performance performance = result.performances.isEmpty()
-                            ? null : result.performances.get(spinner.getSelectedItemPosition());
+                            ? null : result.performances.get(selectedPerformanceIndex[0]);
                     applyImportedConcert(result, performance);
                     importDialog = null;
                 })
@@ -897,7 +926,7 @@ public class AddConcertFragment extends Fragment {
             TextInputLayout inputLayout = new TextInputLayout(requireContext());
             inputLayout.setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE);
             inputLayout.setHint("歌手名称");
-            EditText input = new EditText(requireContext());
+            EditText input = new TextInputEditText(requireContext());
             input.setId(R.id.edtArtistName);
             input.setSingleLine(true);
             input.setText(artists.get(i));
@@ -931,7 +960,7 @@ public class AddConcertFragment extends Fragment {
             TextInputLayout nameLayout = new TextInputLayout(requireContext());
             nameLayout.setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE);
             nameLayout.setHint("歌曲名称");
-            EditText name = new EditText(requireContext());
+            EditText name = new TextInputEditText(requireContext());
             name.setId(R.id.edtSongName);
             name.setSingleLine(true);
             name.setText(song.getName());
@@ -942,7 +971,7 @@ public class AddConcertFragment extends Fragment {
 
             LinearLayout controls = new LinearLayout(requireContext());
             controls.setGravity(android.view.Gravity.CENTER_VERTICAL);
-            CheckBox encore = new CheckBox(requireContext());
+            CheckBox encore = new MaterialCheckBox(requireContext());
             encore.setId(R.id.checkEncore);
             encore.setText("返场");
             encore.setChecked(song.isEncore());
@@ -961,7 +990,7 @@ public class AddConcertFragment extends Fragment {
     }
 
     private Button rowButton(String label, Runnable action) {
-        Button button = new Button(requireContext());
+        Button button = new MaterialButton(requireContext());
         button.setText(label);
         button.setMinWidth(0);
         button.setMinimumWidth(0);

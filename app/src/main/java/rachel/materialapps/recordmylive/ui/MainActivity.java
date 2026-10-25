@@ -17,6 +17,7 @@ import lombok.Setter;
 import rachel.materialapps.recordmylive.R;
 import rachel.materialapps.recordmylive.databinding.ActivityMainBinding;
 import rachel.materialapps.recordmylive.logic.nearby.NearbyDiscoveryService;
+import rachel.materialapps.recordmylive.ui.pages.home.AddConcertFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,12 +65,27 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
         openNearbyFromNotification(getIntent());
+        // Navigation restores its own back stack after a configuration change.
+        if (savedInstanceState == null) openSharedConcert(getIntent());
     }
 
     @Override protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
         openNearbyFromNotification(intent);
+        openSharedConcert(intent);
+    }
+
+    private void openSharedConcert(Intent intent) {
+        if (intent == null || !Intent.ACTION_SEND.equals(intent.getAction())
+                || !"text/plain".equalsIgnoreCase(intent.getType())) return;
+        CharSequence sharedText = intent.getCharSequenceExtra(Intent.EXTRA_TEXT);
+        if (sharedText == null || sharedText.toString().trim().isEmpty()) return;
+        Bundle args = new Bundle();
+        args.putString(AddConcertFragment.ARG_SHARED_CONCERT_TEXT, sharedText.toString());
+        navController.navigate(R.id.addConcertFragment, args);
+        // The Fragment arguments now own the share; do not replay it on activity recreation.
+        intent.removeExtra(Intent.EXTRA_TEXT);
     }
 
     private void openNearbyFromNotification(Intent intent) {
