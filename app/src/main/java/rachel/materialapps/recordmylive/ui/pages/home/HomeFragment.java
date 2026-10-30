@@ -57,6 +57,7 @@ public class HomeFragment extends Fragment {
     private AlertDialog deleteDialog;
 
     private LocalDate selectedDate = LocalDate.now();
+    private YearMonth visibleMonth;
 
     private Set<LocalDate> concertDates = new HashSet<>();
     private boolean concertsLoading = true;
@@ -153,9 +154,21 @@ public class HomeFragment extends Fragment {
                 return Unit.INSTANCE;
             }
             YearMonth ym = month.getYearMonth();
+            if (ym.equals(visibleMonth)) {
+                return Unit.INSTANCE;
+            }
+            visibleMonth = ym;
             Log.d(TAG, "onViewCreated: 获得当前年月");
             viewBinding.tvMonth.setText(DateTimeFormatter.ofPattern("yyyy年M月").format(ym.atDay(1)));
             mViewModel.setMonth(ym);
+
+            LocalDate today = LocalDate.now();
+            LocalDate defaultDate = ym.equals(YearMonth.from(today))
+                    ? today
+                    : ym.atDay(1);
+            if (!defaultDate.equals(selectedDate)) {
+                mViewModel.selectDate(defaultDate);
+            }
             return Unit.INSTANCE;
         });
 

@@ -130,6 +130,7 @@
             </LinearLayout>
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
+                style="@style/Widget.Material3Expressive.CircularProgressIndicator.Wavy"
                 android:id="@+id/loadingIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

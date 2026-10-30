@@ -257,10 +257,12 @@
                             android:textStyle="bold"/>
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnViewExpenses"
-                            style="@style/Widget.Material3.Button.TextButton"
+                            style="@style/Widget.Material3.Button.IconButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="查看明细 ›"/>
+                            android:text="查看"
+                            app:icon="@drawable/baseline_read_more"
+                           />
                     </LinearLayout>
 
                     <TextView

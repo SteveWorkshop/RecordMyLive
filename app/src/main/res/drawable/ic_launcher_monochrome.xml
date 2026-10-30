@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- Actual transparent cutouts preserve the note when Android supplies a single tint. -->
+    <group android:pivotX="54" android:pivotY="54"
+        android:scaleX="0.72" android:scaleY="0.72" android:rotation="-7">
+        <path android:fillColor="#FFFFFF" android:fillType="evenOdd"
+            android:pathData="M34.8,22.2 H63.3 V32.6 Q63.3,37.6 68.3,37.6 H78.6 V80.4 Q78.6,85.8 73.2,85.8 H34.8 Q29.4,85.8 29.4,80.4 V27.6 Q29.4,22.2 34.8,22.2 Z
+                M51,43.2 Q51,41.4 52.8,41.4 H55.8 L66.6,45.7 Q70,47.1 68.1,50.1 Q67.1,51.5 65.1,50.7 L55.8,47 V64.8 C55.8,68.4 51.1,71 46.2,70.2 C41.2,69.4 39.4,66 41.4,63 C43.2,60.3 47.4,59.2 51,59.7 Z
+                M41.7,73.2 H66.3 Q67.8,73.2 67.8,74.7 Q67.8,76.2 66.3,76.2 H41.7 Q40.2,76.2 40.2,74.7 Q40.2,73.2 41.7,73.2 Z" />
+        <path android:fillColor="#FFFFFF"
+            android:pathData="M65.3,22.2 L78.6,35.6 H68.3 Q65.3,35.6 65.3,32.6 Z" />
+    </group>
+</vector>

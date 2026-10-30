@@ -40,7 +40,7 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                tools:text="银临《粼粼》巡回演唱会上海场" />
+                tools:text="测试演出名称" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvDateTime"

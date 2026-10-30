@@ -24,9 +24,9 @@
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <LinearLayout android:id="@+id/periodNavigator" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:gravity="center_vertical" android:orientation="horizontal">
-            <com.google.android.material.button.MaterialButton android:id="@+id/btnPrevious" style="@style/Widget.Material3.Button.TextButton" android:layout_width="48dp" android:layout_height="48dp" android:text="‹" android:textSize="26sp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btnPrevious" style="@style/Widget.Material3.Button.IconButton" android:layout_width="48dp" android:layout_height="48dp" app:icon="@drawable/baseline_chevron_left"/>
             <TextView android:id="@+id/tvPeriod" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:textStyle="bold"/>
-            <com.google.android.material.button.MaterialButton android:id="@+id/btnNext" style="@style/Widget.Material3.Button.TextButton" android:layout_width="48dp" android:layout_height="48dp" android:text="›" android:textSize="26sp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btnNext" style="@style/Widget.Material3.Button.IconButton" android:layout_width="48dp" android:layout_height="48dp" app:icon="@drawable/baseline_chevron_right"/>
         </LinearLayout>
 
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:text="仅统计状态为“已观看”的演出" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp"/>

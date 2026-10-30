@@ -34,7 +34,7 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvName"
-                android:text="银临《粼粼》巡回演唱会上海场"
+                android:text="测试演出名称"
                 style="@style/TextAppearance.Material3.TitleMedium"
                 android:maxLines="2"
                 android:layout_width="wrap_content"
@@ -50,14 +50,14 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvVenue"
-                android:text="上海 | 前滩31演艺中心"
+                android:text="测试地址"
                 style="@style/TextAppearance.Material3.BodyMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvArtist"
-                android:text="银临/李常超/少司命/黄诗扶"
+                android:text="司南"
                 style="@style/TextAppearance.Material3.BodySmall"
                 android:layout_marginTop="4dp"
                 android:layout_width="wrap_content"
